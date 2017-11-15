@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1",
     "build": "webpack -p",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "server": "static build"
   },
   "author": "homelleon <ihomelleoni@yandex.ru>",
   "license": "ISC",
@@ -14,6 +15,9 @@
     "webpack": "^3.8.1"
   },
   "devDependencies": {
-    "html-webpack-plugin": "^2.30.1"
+    "html-webpack-plugin": "^2.30.1",
+    "node-static": "^0.7.10",
+    "pug": "^2.0.0-rc.4",
+    "pug-loader": "^2.3.0"
   }
 }

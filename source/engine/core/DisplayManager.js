@@ -1,10 +1,9 @@
-import bar from './bar';
-import display from './engine/core/DisplayManager';
-
-bar();
-
-window.onload = function() {	
-	var canvas = document.getElementById("gl");
+export default function Display() {
+	var canvas = document.createElement("canvas");
+	canvas.id = "gl";
+	canvas.style.height = "600px";
+	canvas.style.width = "800px";
+	document.body.appendChild(canvas);
 	var gl = canvas.getContext("webgl") || 
 		canvas.getContext("experimental-webgl") ||
 		canvas.getContext("moz-webgl") ||
@@ -18,4 +17,5 @@ window.onload = function() {
 		gl.clearColor(1.0, 1.0, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
-};
+	return gl;
+}
