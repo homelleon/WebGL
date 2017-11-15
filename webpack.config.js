@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
 const pug = require('./webpack/pug');
 const devserver = require('./webpack/devserver');
+const images = require('./webpack/images');
 
 const PATHS = {
 	source: path.join(__dirname, 'source'),
@@ -22,7 +23,8 @@ const common = merge([
 		  })
 	  ],
 	},
-	pug()
+	pug(),
+	images()
 ]);
 
 module.exports = function(env) {
