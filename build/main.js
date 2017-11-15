@@ -83,8 +83,8 @@ window.onload = function() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = WebGL;
-function WebGL(height, width) {
+/* harmony export (immutable) */ __webpack_exports__["a"] = initializeWebGL;
+function initializeWebGL(height, width) {
 	var canvas = document.createElement("canvas");
 	canvas.id = "gl";
 	canvas.style.height = height;

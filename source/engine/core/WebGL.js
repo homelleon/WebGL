@@ -1,4 +1,4 @@
-export default function WebGL(height, width) {
+export default function initializeWebGL(height, width) {
 	var canvas = document.createElement("canvas");
 	canvas.id = "gl";
 	canvas.style.height = height;
