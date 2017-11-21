@@ -1,4 +1,4 @@
-export default function ShaderProgram(name, gl) {
+export default function ShaderProgram(gl) {
 	var programID = gl.createProgram();
 	var vertexShaderID;
 	var fragmentShaderID;
