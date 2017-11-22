@@ -1,11 +1,9 @@
 export default function ShaderProgram(gl) {
-	var programID = gl.createProgram();
-	var vertexShaderID;
-	var fragmentShaderID;
-	var uniforms = {};
-	
 	// initialization
-	if(this.programID == 0) {
+	this.name = "TestShader";
+	this.programID = gl.createProgram();
+	
+	if(!this.programID) {
 		console.log("Shader creation failed!");
 		return;
 	} else {
@@ -23,15 +21,15 @@ export default function ShaderProgram(gl) {
 	}
 	
 	this.clean = function clean() {
-		stop();
+		this.stop();
 		if(this.vertexShaderID) {
-			gl.detachShader(programID, vertexShaderID)
+			gl.detachShader(this.programID, this.vertexShaderID)
 		}
 		
 		if(this.fragmentShaderID) {
-			gl.detachShader(programID, fragmentShaderID)
+			gl.detachShader(this.programID, this.fragmentShaderID)
 		}
-		gl.deleteProgram(programID);
+		gl.deleteProgram(this.programID);
 	}
 	
 	this.loadUniformLocations = function loadUniformLocations() {}
@@ -39,22 +37,22 @@ export default function ShaderProgram(gl) {
 	
 	this.compile = function compile() {
 		this.bindAttributes();
-		gl.linkProgram(programID);
+		gl.linkProgram(this.programID);
 		
-		if(!gl.getProgramParameter(programID, gl.LINK_STATUS)) {
-			console.log(gl.getProgramInfoLog(programID, 1024));
+		if(!gl.getProgramParameter(this.programID, gl.LINK_STATUS)) {
+			console.log(gl.getProgramInfoLog(this.programID, 1024));
 			return;
 		}
-		gl.validateProgram(programID);
+		gl.validateProgram(this.programID);
 		
-		if(!gl.getProgramParameter(programID, gl.VALIDATE_STATUS)) {
-			console.log(gl.getProgramInfoLog(programID, 1024));
+		if(!gl.getProgramParameter(this.programID, gl.VALIDATE_STATUS)) {
+			console.log(gl.getProgramInfoLog(this.programID, 1024));
 			return;
 		}
 		this.loadUniformLocations();
 	}
 	
-	var loadShader = function loadShader(file, type) {
+	this.loadShader = function loadShader(file, type) {
 		var shaderID = gl.createShader(type);
 		gl.shaderSource(shaderID, file);
 		gl.compileShader(shaderID);
@@ -63,55 +61,55 @@ export default function ShaderProgram(gl) {
 			console.log("Couldn't compile shader!");
 			return;
 		}
-		gl.attachShader(programID, shaderID);
+		gl.attachShader(this.programID, shaderID);
 		return shaderID;
 	}
 	
 	
 	this.addVertexShader = function addVertexShader(text) {
-		vertexShaderID = loadShader(text, gl.VERTEX_SHADER);
+		this.vertexShaderID = this.loadShader(text, gl.VERTEX_SHADER);
 	}
 	
 	this.addFragmentShader = function addFragmentShader(text) {
-		fragmentShaderID = loadShader(text, gl.FRAGMENT_SHADER);
+		this.fragmentShaderID = this.loadShader(text, gl.FRAGMENT_SHADER);
 	}
 	
 	this.addUniform = function addUniform(name) {
 		var uniformLocation = this.getUniformLocation(name);
 		
 		if(uniformLocation == "0xFFFFFFFF") {
-			console.log("Couldn't find uniform: ".name);
+			console.log("Couldn't find uniform: " + name);
 			return;
 		}
 		
-		uniforms[name] = uniformLocation;
+		this.uniforms[name] = uniformLocation;
 	}
 	
 	this.loadInt = function loadInt(name, value) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = this.uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
 	this.loadFloat = function loadFloat(name, value) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = this.uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
 	this.load3DVector = function load3DVector(name, vector) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = this.uniforms[name];
 		gl.uniform3f(uniformLocation, vector.x, vector.y, vector.z);
 	}
 	
 	this.load2DVector = function load2DVector(name, vector) {
-		var uniforomLocation = uniforms[name];
+		var uniforomLocation = this.uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
 	}
 	
 	this.bindAttribute = function bindAttribute(attribute, name) {
-		gl.bindAttribLocation(programID, attribute, name);
+		gl.bindAttribLocation(this.programID, attribute, name);
 	}
 	
 	this.bindFragOutput = function bindFragOutput(attribute, name) {
-		gl.bindFragDataLocation(programID, attribute, name);
+		gl.bindFragDataLocation(this.programID, attribute, name);
 	}
 }

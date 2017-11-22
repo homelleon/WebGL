@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const merge = require('webpack-merge');
+const babel = require('./webpack/babel');
 const pug = require('./webpack/pug');
 const devserver = require('./webpack/devserver');
 const images = require('./webpack/images');
@@ -23,6 +24,7 @@ const common = merge([
 		  })
 	  ],
 	},
+	babel(),
 	pug(),
 	images()
 ]);

@@ -2,6 +2,7 @@ import TestShader from './../shader/TestShader';
 
 export default function TestRenderer(gl) {
 	var shader = new TestShader(gl);
+	console.log(shader);
 	var vetices = [
 		-0.5, 0,
 		0.0, 1.0,
