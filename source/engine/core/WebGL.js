@@ -1,4 +1,4 @@
-export default function initializeWebGL(height, width) {
+export function initializeWebGL(height, width) {
 	var canvas = document.createElement("canvas");
 	canvas.id = "gl";
 	canvas.style.height = height;
@@ -19,7 +19,7 @@ export default function initializeWebGL(height, width) {
 	}
 	
 	if(gl) {		
-		gl.clearColor(1.0, 1.0, 0.0, 1.0);
+		gl.clearColor(1.0, 0.5, 0.0, 1.0);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 	}
 	return gl;

@@ -1,6 +1,6 @@
 import MainRenderer from './../renderer/MainRenderer';
 
-export default function Loop(gl) {
+export function Loop(gl) {
 	var renderer = new MainRenderer(gl);
 	
 	this.update = function update() {

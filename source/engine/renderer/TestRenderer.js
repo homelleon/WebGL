@@ -1,8 +1,8 @@
 import TestShader from './../shader/TestShader';
 
 export default function TestRenderer(gl) {
-	var shader = new TestShader(gl);
-	console.log(shader);
+	this.shader = new TestShader(gl);
+	
 	var vetices = [
 		-0.5, 0,
 		0.0, 1.0,
@@ -10,13 +10,14 @@ export default function TestRenderer(gl) {
 	];
 	
 	this.render = function render() {
-		shader.start();
+		console.dir(this.shader);
+		this.shader.start();
 		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3)
-		shader.stop();
+		this.shader.stop();
 	}
 	
 	this.clean = function clean() {
-		shader.stop();
-		shader.clean();
+		this.shader.stop();
+		this.shader.clean();
 	}
 }

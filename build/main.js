@@ -70,30 +70,24 @@
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_core_WebGL__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_shader_TestShader__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_shader_ShaderProgram__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_core_Loop__ = __webpack_require__(2);
 
 
 
 
-window.onload = function() {
-	var gl = new __WEBPACK_IMPORTED_MODULE_0__engine_core_WebGL__["a" /* default */]("600px","800px");
-	gl.viewport(0,0,600,800);
-	var shader = new __WEBPACK_IMPORTED_MODULE_2__engine_shader_ShaderProgram__["a" /* default */](gl);
-	var vertexShader = "#version 200 core" +
-			"in vec2 position"+
-			"void main() {"+
-			"gl_Position = vec4(position, 0, 1);"+
-			"}";
-	var fragmentShader = "#version 200 core" +
-			"void main() {" +
-			"gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);" +
-			"}" 
-	
-	var testShader = new __WEBPACK_IMPORTED_MODULE_1__engine_shader_TestShader__["a" /* default */]("testShader", gl, vertexShader, fragmentShader);
-	testShader.start();
+
+var gl;
+var loop;
+
+window.onload = init();
+
+function init() {
+	gl = new __WEBPACK_IMPORTED_MODULE_0__engine_core_WebGL__["a" /* default */]("800px","1000px");
+	gl.viewport(0, 0, 600, 800);
+	loop = new __WEBPACK_IMPORTED_MODULE_1__engine_core_Loop__["a" /* default */](gl);
+	loop.update();
+	loop.stop();
 };
-
 
 /***/ }),
 /* 1 */
@@ -133,16 +127,20 @@ function initializeWebGL(height, width) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = TestShader;
-function TestShader(name, gl, vertex, fragment) {
-	//----programs
-	const VERTEX_FILE = vertex;
-	const FRAGMENT_FILE = fragment;
+/* harmony export (immutable) */ __webpack_exports__["a"] = Loop;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__ = __webpack_require__(3);
+
+
+function Loop(gl) {
+	var renderer = new __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__["a" /* default */](gl);
 	
-	this.prototype = new ShaderProgram(name, gl);
-	addVertexShader(VERTEX_FILE);
-	addFragmentShader(FRAGMENT_FILE);
-	compile();
+	this.update = function update() {
+		renderer.render();
+	}
+	
+	this.stop = function stop() {
+		renderer.stop();
+	}
 }
 
 /***/ }),
@@ -150,31 +148,110 @@ function TestShader(name, gl, vertex, fragment) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (immutable) */ __webpack_exports__["a"] = ShaderProgram;
-function ShaderProgram(name, gl) {
-	var programID = gl.createProgram();
-	var vertexShaderID;
-	var fragmentShaderID;
-	var uniforms = {};
+/* harmony export (immutable) */ __webpack_exports__["a"] = MainRenderer;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__TestRenderer__ = __webpack_require__(4);
+
+
+function MainRenderer(gl) {	
+	var testRenderer = new __WEBPACK_IMPORTED_MODULE_0__TestRenderer__["a" /* default */](gl);
 	
-	if(this.programID == 0) {
+	this.render = function render() {
+		testRenderer.render();
+	}
+	
+	this.clean = function clean() {
+		testRenderer.clean();
+	}
+	
+}
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = TestRenderer;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shader_TestShader__ = __webpack_require__(5);
+
+
+function TestRenderer(gl) {
+	var shader = new __WEBPACK_IMPORTED_MODULE_0__shader_TestShader__["a" /* default */](gl);
+	console.log(shader);
+	var vetices = [
+		-0.5, 0,
+		0.0, 1.0,
+		0.5, 0
+	];
+	
+	this.render = function render() {
+		shader.start;
+		gl.drawArrays(gl.TRIANGLE_STRIP, 0, 3)
+		shader.stop;
+	}
+	
+	this.clean = function clean() {
+		shader.stop;
+		shader.clean;
+	}
+}
+
+/***/ }),
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (immutable) */ __webpack_exports__["a"] = TestShader;
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ShaderProgram__ = __webpack_require__(6);
+
+
+function TestShader(gl) {
+	this.value = 1;
+	//----programs
+	const VERTEX_FILE = "#version 200 core" +
+	"attribute vec2 position"+
+	"void main() {"+
+	"gl_Position = vec4(position, 0, 1);" +
+	"}";	
+	const FRAGMENT_FILE = "void main() {" +
+	"gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);" +
+	"}";
+//	this.prototype.addVertexShader(VERTEX_FILE);
+//	this.prototype.addFragmentShader(FRAGMENT_FILE);
+//	this.prototype.compile();
+}
+
+/***/ }),
+/* 6 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export default */
+function ShaderProgram(gl) {
+	
+	function Shader() {
+		this.programID = gl.createProgram();	
+	}
+	// initialization
+	
+	if(!Shader.programID) {
 		console.log("Shader creation failed!");
 		return;
 	} else {
 		console.log("Shader created!");
 	}
 	
-	this.start = function start() {
+	// functions
+	Shader.start = function start() {
 		gl.useProgram(this.programID);
 		console.log("Shader started!");
 	}
 	
-	this.stop = function stop() {
+	Shader.stop = function stop() {
 		gl.useProgram(0);
 	}
 	
-	this.clean = function clean() {
-		stop();
+	Shader.clean = function clean() {
+		this.stop();
 		if(this.vertexShaderID) {
 			gl.detachShader(this.programID, this.vertexShaderID)
 		}
@@ -185,27 +262,27 @@ function ShaderProgram(name, gl) {
 		gl.deleteProgram(this.programID);
 	}
 	
-	this.loadUniformLocations = function loadUniformLocations() {}
+	Shader.loadUniformLocations = function loadUniformLocations() {}
+	Shader.bindAttributes = function bindAttributes() {}
 	
-	this.compile = function compile() {
+	Shader.compile = function compile() {
 		this.bindAttributes();
 		gl.linkProgram(this.programID);
 		
-		if(gl.getProgrami(programID, gl.LINK_STATUS) == 0) {
-			console.log(gl.getProgramInfoLog(programID, 1024));
+		if(!gl.getProgramParameter(this.programID, gl.LINK_STATUS)) {
+			console.log(gl.getProgramInfoLog(this.programID, 1024));
 			return;
 		}
-		
 		gl.validateProgram(this.programID);
 		
-		if(gl.getProgrami(this.programID, gl.VALIDATE_STATUS) == 0) {
-			console.log(gl.getProgramInfoLog(programID, 1024));
+		if(!gl.getProgramParameter(this.programID, gl.VALIDATE_STATUS)) {
+			console.log(gl.getProgramInfoLog(this.programID, 1024));
 			return;
 		}
 		this.loadUniformLocations();
 	}
 	
-	var loadShader = function loadShader(file, type) {
+	Shader.loadShader = function loadShader(file, type) {
 		var shaderID = gl.createShader(type);
 		gl.shaderSource(shaderID, file);
 		gl.compileShader(shaderID);
@@ -214,57 +291,59 @@ function ShaderProgram(name, gl) {
 			console.log("Couldn't compile shader!");
 			return;
 		}
-		gl.attachShader(programID, shaderID);
+		gl.attachShader(this.programID, shaderID);
 		return shaderID;
 	}
 	
 	
-	this.addVertexShader = function addVertexShader(text) {
-		vertexShaderID = loadShader(text, gl.VERTEX_SHADER);
+	Shader.addVertexShader = function addVertexShader(text) {
+		this.vertexShaderID = this.loadShader(text, gl.VERTEX_SHADER);
 	}
 	
-	this.addFragmentShader = function addFragmentShader(text) {
-		fragmentShaderID = loadShader(text, gl.FRAGMENT_SHADER);
+	Shader.addFragmentShader = function addFragmentShader(text) {
+		this.fragmentShaderID = this.loadShader(text, gl.FRAGMENT_SHADER);
 	}
 	
-	this.addUniform = function addUniform(name) {
+	Shader.addUniform = function addUniform(name) {
 		var uniformLocation = this.getUniformLocation(name);
 		
 		if(uniformLocation == "0xFFFFFFFF") {
-			console.log("Couldn't find uniform: ".name);
+			console.log("Couldn't find uniform: " + name);
 			return;
 		}
 		
-		uniforms[name] = uniformLocation;
+		this.uniforms[name] = uniformLocation;
 	}
 	
-	this.loadInt = function loadInt(name, value) {
-		var uniformLocation = uniforms[name];
+	Shader.loadInt = function loadInt(name, value) {
+		var uniformLocation = this.uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
-	this.loadFloat = function loadFloat(name, value) {
-		var uniformLocation = uniforms[name];
+	Shader.loadFloat = function loadFloat(name, value) {
+		var uniformLocation = this.uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
-	this.load3DVector = function load3DVector(name, vector) {
-		var uniformLocation = uniforms[name];
+	Shader.load3DVector = function load3DVector(name, vector) {
+		var uniformLocation = this.uniforms[name];
 		gl.uniform3f(uniformLocation, vector.x, vector.y, vector.z);
 	}
 	
-	this.load2DVector = function load2DVector(name, vector) {
-		var uniforomLocation = uniforms[name];
+	Shader.load2DVector = function load2DVector(name, vector) {
+		var uniforomLocation = this.uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
 	}
 	
-	this.bindAttribute = function bindAttribute(attribute, name) {
-		gl.bindAttribLocation(programID, attribute, name);
+	Shader.bindAttribute = function bindAttribute(attribute, name) {
+		gl.bindAttribLocation(this.programID, attribute, name);
 	}
 	
-	this.bindFragOutput = function bindFragOutput(attribute, name) {
-		gl.bindFragDataLocation(programID, attribute, name);
+	Shader.bindFragOutput = function bindFragOutput(attribute, name) {
+		gl.bindFragDataLocation(this.programID, attribute, name);
 	}
+	
+	return Shader;
 }
 
 /***/ })

@@ -1,7 +1,7 @@
 'use strict';
 
-import initializeWebGL from './engine/core/WebGL';
-import Loop from './engine/core/Loop';
+import {initializeWebGL} from './engine/core/WebGL';
+import {Loop} from './engine/core/Loop';
 
 var gl;
 var loop;
@@ -13,8 +13,5 @@ function init() {
 	gl.viewport(0, 0, 600, 800);
 	loop = new Loop(gl);
 	loop.update();
-//	while(true) {
-//		loop.update();
-//	}
-//	loop.stop();
+	loop.stop();
 };

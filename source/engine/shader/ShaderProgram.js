@@ -1,11 +1,11 @@
-export default function ShaderProgram(gl) {
-	// initialization
-	this.name = "TestShader";
+export function ShaderProgram(gl) {
+	
 	this.programID = gl.createProgram();
+	// initialization
 	
 	if(!this.programID) {
 		console.log("Shader creation failed!");
-		return;
+		return null;
 	} else {
 		console.log("Shader created!");
 	}
@@ -41,25 +41,25 @@ export default function ShaderProgram(gl) {
 		
 		if(!gl.getProgramParameter(this.programID, gl.LINK_STATUS)) {
 			console.log(gl.getProgramInfoLog(this.programID, 1024));
-			return;
+			return null;
 		}
 		gl.validateProgram(this.programID);
 		
 		if(!gl.getProgramParameter(this.programID, gl.VALIDATE_STATUS)) {
 			console.log(gl.getProgramInfoLog(this.programID, 1024));
-			return;
+			return null;
 		}
 		this.loadUniformLocations();
 	}
 	
 	this.loadShader = function loadShader(file, type) {
-		var shaderID = gl.createShader(type);
+		let shaderID = gl.createShader(type);
 		gl.shaderSource(shaderID, file);
 		gl.compileShader(shaderID);
 		if(gl.getShaderParameter(shaderID, gl.COMPILE_STATUS) == gl.FALSE) {
 			console.log(gl.getShaderInfoLog(shaderID, 500));
 			console.log("Couldn't compile shader!");
-			return;
+			return null;
 		}
 		gl.attachShader(this.programID, shaderID);
 		return shaderID;
