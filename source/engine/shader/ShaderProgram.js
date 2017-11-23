@@ -1,23 +1,25 @@
-export function ShaderProgram(gl) {
+import {gl} from "./../../index.js";
+
+export function ShaderProgram() {
+	// initialization
+	const VERTEX_SHADER = 'shader-vs';
+	const FRAGMENT_SHADER = 'shader-fs';
 	
 	this.programID = gl.createProgram();
-	// initialization
+
 	
 	if(!this.programID) {
 		console.log("Shader creation failed!");
 		return null;
-	} else {
-		console.log("Shader created!");
 	}
 	
-	// functions
+	// methods
 	this.start = function start() {
 		gl.useProgram(this.programID);
-		console.log("Shader started!");
 	}
 	
 	this.stop = function stop() {
-		gl.useProgram(0);
+		gl.useProgram(null);
 	}
 	
 	this.clean = function clean() {
@@ -29,13 +31,14 @@ export function ShaderProgram(gl) {
 		if(this.fragmentShaderID) {
 			gl.detachShader(this.programID, this.fragmentShaderID)
 		}
+		gl.deleteShader(this.fragmentShaderID);
+		gl.deleteShader(this.vertexShaderID);
 		gl.deleteProgram(this.programID);
 	}
 	
 	this.loadUniformLocations = function loadUniformLocations() {}
-	this.bindAttributes = function bindAttributes() {}
 	
-	this.compile = function compile() {
+	this.compileShaders = function compileShader() {
 		this.bindAttributes();
 		gl.linkProgram(this.programID);
 		
@@ -53,10 +56,11 @@ export function ShaderProgram(gl) {
 	}
 	
 	this.loadShader = function loadShader(file, type) {
-		let shaderID = gl.createShader(type);
-		gl.shaderSource(shaderID, file);
+		var shaderID = gl.createShader(type);
+		var source = document.getElementById(file).innerHTML;
+		gl.shaderSource(shaderID, source);
 		gl.compileShader(shaderID);
-		if(gl.getShaderParameter(shaderID, gl.COMPILE_STATUS) == gl.FALSE) {
+		if(!gl.getShaderParameter(shaderID, gl.COMPILE_STATUS)) {
 			console.log(gl.getShaderInfoLog(shaderID, 500));
 			console.log("Couldn't compile shader!");
 			return null;
@@ -103,6 +107,12 @@ export function ShaderProgram(gl) {
 	this.load2DVector = function load2DVector(name, vector) {
 		var uniforomLocation = this.uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
+	}
+	
+	this.bindAttributes = function bindAttributes() {	
+//		this.vertexPositionAttribute = 
+//			gl.getAttribLocation(this.programID, "aVertexPosition");
+//		gl.enableVertexAttribArray(this.vertexPositionAttribute);
 	}
 	
 	this.bindAttribute = function bindAttribute(attribute, name) {

@@ -1,13 +1,15 @@
-import MainRenderer from './../renderer/MainRenderer';
+import {MainRenderer} from './../renderer/MainRenderer';
 
-export function Loop(gl) {
-	var renderer = new MainRenderer(gl);
+export function Loop() {
+	// initialization
+	var renderer = new MainRenderer();
 	
+	// methods
 	this.update = function update() {
 		renderer.render();
 	}
 	
 	this.stop = function stop() {
-		renderer.stop();
+		renderer.clean();
 	}
 }

@@ -1,23 +1,21 @@
 import {ShaderProgram} from './ShaderProgram';
 
-export default function TestShader(gl) {
-	this.__proto__ = new ShaderProgram(gl);
+export function TestShader() {
+	this.__proto__ = new ShaderProgram();
 	//----programs
-	const VERTEX_FILE = "attribute vec2 position "+
-	"void main() { "+
-	"gl_Position = vec4(position, 0, 1); " +
-	"} ";	
-	const FRAGMENT_FILE = "void main() { " +
-	"gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); " +
-	"} ";
+	const VERTEX_FILE = 'shader-vs';	
+	const FRAGMENT_FILE = 'shader-fs';
+	//----attributes
+	const ATTRIBUTE_POSITION = "aVertexPosition";
 	
-	this.bindAttributes();
+	// functions
+	// @override
+	this.bindAttributes = function bindAttributes() {
+		this.bindAttribute(0, ATTRIBUTE_POSITION);
+	}
 	
+	// initialize
 	this.addVertexShader(VERTEX_FILE);
 	this.addFragmentShader(FRAGMENT_FILE);
-	this.compile();
-	
-	this.bindAttributes = function bindAttributes() {
-		this.bindAttribute(0, position);
-	}
+	this.compileShaders();
 }
