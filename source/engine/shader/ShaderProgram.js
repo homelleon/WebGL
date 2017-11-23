@@ -109,11 +109,7 @@ export function ShaderProgram() {
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
 	}
 	
-	this.bindAttributes = function bindAttributes() {	
-//		this.vertexPositionAttribute = 
-//			gl.getAttribLocation(this.programID, "aVertexPosition");
-//		gl.enableVertexAttribArray(this.vertexPositionAttribute);
-	}
+	this.bindAttributes = function bindAttributes() {}
 	
 	this.bindAttribute = function bindAttribute(attribute, name) {
 		gl.bindAttribLocation(this.programID, attribute, name);

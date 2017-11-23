@@ -1,31 +1,33 @@
 import {TestShader} from './../shader/TestShader';
+import {VAO} from './../primitive/VAO';
+import {VBO} from './../primitive/VBO';
 import {gl} from  "./../../index.js";
 
 export function TestRenderer() {	
 	// initialization
 	this.shader = new TestShader();
 	
-	this.vertexBuffer = gl.createBuffer();
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 	var triangleVertices = [
 		0.0, 0.5, 0.0,
 		-0.5, -0.5, 0.0,
 		0.5, -0.5, 0,0
 	];
 	
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(triangleVertices),
-			gl.STATIC_DRAW);
-	this.vertexBuffer.itemSize = 3;
-	this.vertexBuffer.numberOfItems = 3;
+	this.vao = new VAO();
+	this.vao.bind();
+	console.dir(this.vao);
+	
+	this.vbo = new VBO(gl.ARRAY_BUFFER);
+	this.vbo.bind();
+	this.vbo.setData(triangleVertices, 3);
 	
 	// methods
 	this.render = function render() {
 		this.shader.start();
-		gl.enableVertexAttribArray(this.shader.vertexPositionAttribute);
-		gl.vertexAttribPointer(this.shader.vertexPositionAttribute,
-				this.vertexBuffer.itemSize, gl.FLOAT, false, 0, 0);
-		gl.drawArrays(gl.TRIANGLES, 0, this.vertexBuffer.numberOfItems);
+		gl.enableVertexAttribArray(0);
+		gl.vertexAttribPointer(0,
+				this.vbo.dimentions, gl.FLOAT, false, 0, 0);
+		gl.drawArrays(gl.TRIANGLES, 0, this.vbo.size);
 		this.shader.stop();
 	}
 	
