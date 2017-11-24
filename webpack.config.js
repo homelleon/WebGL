@@ -4,15 +4,20 @@ const merge = require('webpack-merge');
 const pug = require('./webpack/pug');
 const devserver = require('./webpack/devserver');
 const images = require('./webpack/images');
+const babel = require('./webpack/babel');
 
 const PATHS = {
 	source: path.join(__dirname, 'source'),
+	test: path.join(__dirname, 'test'),
 	build: path.join(__dirname, 'build')
 };
 
 const common = merge([
 	{
-	  entry: PATHS.source + '/index.js',
+	  entry: {
+		  main: PATHS.source + '/index.js',
+		  test: PATHS.test + '/indexTest.js'
+	  },
 	  output: {
 		path: PATHS.build,
 	    filename: '[name].js'
@@ -23,6 +28,7 @@ const common = merge([
 		  })
 	  ],
 	},
+	babel(),
 	pug(),
 	images()
 ]);

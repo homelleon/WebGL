@@ -13,9 +13,9 @@ export function TestRenderer() {
 		0.5, -0.5, 0,0
 	];
 	
-	this.vao = new VAO();
-	this.vao.bind();
-	console.dir(this.vao);
+//	this.vao = new VAO();
+//	this.vao.bind();
+//	console.dir(this.vao);
 	
 	this.vbo = new VBO(gl.ARRAY_BUFFER);
 	this.vbo.bind();
