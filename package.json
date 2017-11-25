@@ -2,15 +2,19 @@
   "name": "WebGL",
   "version": "0.0.1",
   "description": "Generated with Eclipse npm Tools",
-  "main": "app.js",
+  "main": "build/main.js",
   "scripts": {
     "test": "jest",
     "build": "webpack --env production",
-    "start": "webpack-dev-server --env development",
+    "build-test": "webpack --env test",
+    "dev": "webpack-dev-server --env development",
     "server": "static build"
   },
   "author": "homelleon <ihomelleoni@yandex.ru>",
   "license": "ISC",
+  "jest": {
+  	"roots": ["<rootDir>/build/test"]
+  },
   "dependencies": {
     "webpack": "^3.8.1"
   },

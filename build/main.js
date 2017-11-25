@@ -102,7 +102,7 @@ window.onload = function () {
 		console.dir(gl); // see all webgl objects
 		gl.viewportHeight = canvas.height;
 		gl.viewportWidth = canvas.width;
-		//		gl.haveVAOs = getAndApplyExtension(gl, "OES_vertex_array_object");
+		gl.haveVAOs = getAndApplyExtension(gl, "OES_vertex_array_object");
 		// start engine	
 		var loop = new __WEBPACK_IMPORTED_MODULE_0__engine_core_Loop__["a" /* Loop */]();
 		loop.update();
@@ -110,27 +110,30 @@ window.onload = function () {
 	}
 };
 
-//function getAndApplyExtension(gl, name) {
-//	  var ext = gl.getExtension(name);
-//	  if (!ext) {
-//	    return false;
-//	  }
-//	  var suffix = name.split("_")[0];
-//	  var prefix = suffix = '_';
-//	  var suffixRE = new RegExp(suffix + '$');
-//	  var prefixRE = new RegExp('^' + prefix);
-//	  for (var key in ext) {
-//	    var val = ext[key];
-//	    if (typeof(val) === 'function') {
-//	      // remove suffix (eg: bindVertexArrayOES -> bindVertexArray)
-//	      var unsuffixedKey = key.replace(suffixRE, '');
-//	     if (key.substing) {
-//	      gl[unprefixedKey] = ext[key].bind(ext);
-//	    } else {
-//	      var unprefixedKey = key.replace(prefixRE, '');
-//	      gl[unprefixedKey] = ext[key];
-//	    }
-//	  }
+//TODO: need to correct that function
+function getAndApplyExtension(gl, name) {
+	var ext = gl.getExtension(name);
+	if (!ext) {
+		return false;
+	}
+	var suffix = name.split("_")[0];
+	var prefix = suffix = '_';
+	var suffixRE = new RegExp(suffix + '$');
+	var prefixRE = new RegExp('^' + prefix);
+	for (var key in ext) {
+		var val = ext[key];
+		if (typeof val === 'function') {
+			// remove suffix (eg: bindVertexArrayOES -> bindVertexArray)
+			var unsuffixedKey = key.replace(suffixRE, '');
+			if (key.substing) {
+				gl[unprefixedKey] = ext[key].bind(ext);
+			} else {
+				var unprefixedKey = key.replace(prefixRE, '');
+				gl[unprefixedKey] = ext[key];
+			}
+		}
+	}
+}
 
 /***/ }),
 /* 1 */
@@ -191,9 +194,7 @@ function MainRenderer() {
 /* harmony export (immutable) */ __webpack_exports__["a"] = TestRenderer;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shader_TestShader__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__primitive_VAO__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__primitive_VBO__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__index_js__ = __webpack_require__(0);
-
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__index_js__ = __webpack_require__(0);
 
 
 
@@ -202,22 +203,26 @@ function TestRenderer() {
 	// initialization
 	this.shader = new __WEBPACK_IMPORTED_MODULE_0__shader_TestShader__["a" /* TestShader */]();
 
-	var triangleVertices = [0.0, 0.5, 0.0, -0.5, -0.5, 0.0, 0.5, -0.5, 0, 0];
+	var vertices = [
+	// face
+	-0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5,
+	// back 
+	-0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5];
 
-	//	this.vao = new VAO();
-	//	this.vao.bind();
-	//	console.dir(this.vao);
+	var indices = [0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 5, 5, 6, 6, 7, 7, 4, 1, 5, 2, 6, 3, 7];
 
-	this.vbo = new __WEBPACK_IMPORTED_MODULE_2__primitive_VBO__["a" /* VBO */](__WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].ARRAY_BUFFER);
-	this.vbo.bind();
-	this.vbo.setData(triangleVertices, 3);
+	this.vao = new __WEBPACK_IMPORTED_MODULE_1__primitive_VAO__["a" /* VAO */]();
+	this.vao.attachIndex(indices);
+	this.vao.attachBuffer(vertices, 3);
 
 	// methods
 	this.render = function render() {
 		this.shader.start();
-		__WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].enableVertexAttribArray(0);
-		__WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].vertexAttribPointer(0, this.vbo.dimentions, __WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].FLOAT, false, 0, 0);
-		__WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].drawArrays(__WEBPACK_IMPORTED_MODULE_3__index_js__["gl"].TRIANGLES, 0, this.vbo.size);
+		this.vao.indexBuffer.bind();
+		this.vao.vbos[0].bind();
+		__WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].enableVertexAttribArray(0);
+		__WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].vertexAttribPointer(0, this.vao.vbos[0].dimentions, __WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].FLOAT, false, 0, 0);
+		__WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].drawElements(__WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].LINES, this.vao.indexBuffer.size, __WEBPACK_IMPORTED_MODULE_2__index_js__["gl"].UNSIGNED_SHORT, 0);
 		this.shader.stop();
 	};
 
@@ -388,8 +393,10 @@ function ShaderProgram() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* unused harmony export VAO */
+/* harmony export (immutable) */ __webpack_exports__["a"] = VAO;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__primitive_VBO__ = __webpack_require__(7);
+
 
 
 function VAO() {
@@ -399,10 +406,28 @@ function VAO() {
 	} else {
 		this.object = __WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].createVertexArray();
 	}
+	this.vbos = [];
+	this.indexBudffer = null;
 
 	// methods
 	this.bind = function bind() {
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].bindVertexArray(this.object);
+	};
+
+	this.attachBuffer = function attachBuffer(values, dimentions) {
+		var vbo = new __WEBPACK_IMPORTED_MODULE_1__primitive_VBO__["a" /* VBO */](__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].ARRAY_BUFFER);
+		vbo.bind();
+		vbo.setArrayData(values, dimentions);
+		vbo.unbind();
+		this.vbos.push(vbo);
+	};
+
+	this.attachIndex = function attachIndex(values) {
+		var indexVBO = new __WEBPACK_IMPORTED_MODULE_1__primitive_VBO__["a" /* VBO */](__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].ELEMENT_ARRAY_BUFFER);
+		indexVBO.bind();
+		indexVBO.setIndexData(values);
+		indexVBO.unbind();
+		this.indexBuffer = indexVBO;
 	};
 
 	this.unbind = function unbind() {
@@ -433,10 +458,15 @@ function VBO(type) {
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].bindBuffer(this.type, this.object);
 	};
 
-	this.setData = function setData(values, dimentions) {
+	this.setArrayData = function setArrayData(values, dimentions) {
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].bufferData(this.type, new Float32Array(values), __WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].STATIC_DRAW);
 		this.size = values.length / dimentions;
 		this.dimentions = dimentions;
+	};
+
+	this.setIndexData = function setIndexData(values) {
+		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].bufferData(this.type, new Uint16Array(values), __WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].STATIC_DRAW);
+		this.size = values.length;
 	};
 
 	this.clean = function clean() {

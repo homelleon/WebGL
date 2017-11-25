@@ -14,11 +14,17 @@ export function VBO(type) {
 		gl.bindBuffer(this.type, this.object);
 	}
 	
-	this.setData = function setData(values, dimentions) {
+	this.setArrayData = function setArrayData(values, dimentions) {
 		gl.bufferData(this.type, new Float32Array(values),
 				gl.STATIC_DRAW);
 		this.size = values.length / dimentions;
 		this.dimentions = dimentions;
+	}
+	
+	this.setIndexData = function setIndexData(values) {
+		gl.bufferData(this.type, new Uint16Array(values),
+				gl.STATIC_DRAW);
+		this.size = values.length;
 	}
 	
 	this.clean = function clean() {
