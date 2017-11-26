@@ -28,10 +28,10 @@ window.onload = function() {
 	}
 	
 	if(gl) {
-		console.dir(gl); // see all webgl objects
 		gl.viewportHeight = canvas.height;
 		gl.viewportWidth = canvas.width;
 		gl.haveVAOs = getAndApplyExtension(gl, "OES_vertex_array_object");
+		console.dir(gl); // see all webgl objects
 	// start engine	
 		var loop = new Loop();		
 		loop.update();
@@ -62,4 +62,5 @@ function getAndApplyExtension(gl, name) {
 	      }
 	    }
 	  }
+	  return true;
 }
