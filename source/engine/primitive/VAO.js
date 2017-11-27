@@ -3,11 +3,8 @@ import {VBO} from './../primitive/VBO';
 
 export function VAO() {
 	// initialization
-	if(!gl.haveVAOs) {
-		console.log("You don't have extentions!");
-	} else {
-		this.object = gl.createVertexArray();
-    }
+	this.object = gl.createVertexArray();
+	
 	this.vbos = [];
 	this.indexBudffer = null;
     	      
@@ -16,23 +13,44 @@ export function VAO() {
 		gl.bindVertexArray(this.object);
 	}
 	
-	this.attachBuffer = function attachBuffer(values, dimentions) {
+	this.unbind = function unbind() {
+		gl.bindVertexArray(null);
+	}
+	
+	this.bindAttrib = function bindAttrib(attributes) {
+		this.bind();
+		for(var attribute in attributes) {
+			gl.enableVertexAttribArray(attribute);
+		}
+	}
+	
+	this.unbindAttrib = function unbindAttrib(attributes) {
+		for(var attribute in attributes) {
+			gl.disableVertexAttribArray(attribute);
+		}
+		this.unbind();
+	}
+	
+	this.createAttribute = function createAttribute(attribute, dimentions, values) {
 		var vbo = new VBO(gl.ARRAY_BUFFER);
 		vbo.bind();
-		vbo.setArrayData(values, dimentions);
+		vbo.storeData(values, dimentions);
+		gl.vertexAttribPointer(attribute, dimentions, gl.FLOAT, false, 4 * dimentions, 0);
 		vbo.unbind();
 		this.vbos.push(vbo);
 	}
 	
-	this.attachIndex = function attachIndex(values) {
+	this.createIndexBuffer = function createIndexBuffer(values) {
 		var indexVBO = new VBO(gl.ELEMENT_ARRAY_BUFFER);
 		indexVBO.bind();
-		indexVBO.setIndexData(values);
-		indexVBO.unbind();
+		indexVBO.storeIndexData(values);
 		this.indexBuffer = indexVBO; 
 	}
 	
-	this.unbind = function unbind() {
-		gl.bindVertexArray(null);
+	this.clean = function clean() {
+		for(let vbo in this.vbos) {
+			gl.deleteBuffer(vbo.object);
+		}
+		gl.deleteVertexArray(this.object);
 	}
 }

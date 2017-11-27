@@ -1,8 +1,12 @@
-export function this.matrix4f() {
-	this.m = [][];
-	this.setIdentity();
+export function Matrix4f() {
+	this.m = [];
+	this.setIdentity;
 	
 	this.zero = function zero() {
+		this.m[0] = [];
+		this.m[1] = [];
+		this.m[2] = [];
+		this.m[3] = [];
 		this.m[0][0] = 0; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 0; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 0; this.m[2][3] = 0;
@@ -12,6 +16,10 @@ export function this.matrix4f() {
 	}
 	
 	this.setIdentity = function setIdentity() {
+		this.m[0] = [];
+		this.m[1] = [];
+		this.m[2] = [];
+		this.m[3] = [];
 		this.m[0][0] = 1; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 1; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 1; this.m[2][3] = 0;
@@ -21,10 +29,10 @@ export function this.matrix4f() {
 	}
 	
 	this.orthographic2D = function Orthographic2D(width, height) {
-		this.m[0][0] = 2f / width; this.m[0][1] = 0; 		 this.m[0][2] = 0; this.m[0][3] = -1;
-		this.m[1][0] = 0;		   this.m[1][1] = 2f/height; this.m[1][2] = 0; this.m[1][3] = -1;
-		this.m[2][0] = 0; 		   this.m[2][1] = 0; 		 this.m[2][2] = 1; this.m[2][3] =  0;
-		this.m[3][0] = 0; 		   this.m[3][1] = 0; 		 this.m[3][2] = 0; this.m[3][3] =  1;
+		this.m[0][0] = 2 / width; this.m[0][1] = 0; 		  this.m[0][2] = 0; this.m[0][3] = -1;
+		this.m[1][0] = 0;		   this.m[1][1] = 2 / height; this.m[1][2] = 0; this.m[1][3] = -1;
+		this.m[2][0] = 0; 		   this.m[2][1] = 0; 		  this.m[2][2] = 1; this.m[2][3] =  0;
+		this.m[3][0] = 0; 		   this.m[3][1] = 0; 		  this.m[3][2] = 0; this.m[3][3] =  1;
 		
 		return this;
 	}
@@ -44,7 +52,7 @@ export function this.matrix4f() {
 	/**
 	 * Translates current matrix by argument of Vector2f translation object.
 	 */
-	this.translate2f = translate2f(translation) {		
+	this.translate2f = function translate2f(translation) {		
 		this.m[3][0] += this.m[0][0] * translation.x + this.m[1][0] * translation.y;
 		this.m[3][1] += this.m[0][1] * translation.x + this.m[1][1] * translation.y;
 		this.m[3][2] += this.m[0][2] * translation.x + this.m[1][2] * translation.y;
@@ -56,7 +64,7 @@ export function this.matrix4f() {
 	/**
 	 * Creates tranformation plane from current matrix by argument of Vector4f plane object.
 	 */
-	this.transform = transform(plane) {
+	this.transform = function transform(plane) {
 		var x = this.m[0][0] * plane.x + this.m[1][0] * plane.y + this.m[2][0] * plane.z + this.m[3][0] * plane.w;
 		var y = this.m[0][1] * plane.x + this.m[1][1] * plane.y + this.m[2][1] * plane.z + this.m[3][1] * plane.w;
 		var z = this.m[0][2] * plane.x + this.m[1][2] * plane.y + this.m[2][2] * plane.z + this.m[3][2] * plane.w;
@@ -84,9 +92,9 @@ export function this.matrix4f() {
 		var rz = new Matrix4f();
 		
 		//TODO: toRadiants - is there such a function in JS?
-		var x = (float)Math.toRadians(rotation.getX());
-		var y = (float)Math.toRadians(rotation.getY());
-		var z = (float)Math.toRadians(rotation.getZ());
+		var x = Math.toRadians(rotation.getX());
+		var y = Math.toRadians(rotation.getY());
+		var z = Math.toRadians(rotation.getZ());
 		
 		rz.m[0][0] = Math.cos(z); 		 rz.m[0][1] = -Math.sin(z); 	 	 rz.m[0][2] = 0; 				   rz.m[0][3] = 0;
 		rz.m[1][0] = Math.sin(z); 		 rz.m[1][1] = Math.cos(z);  	 	 rz.m[1][2] = 0; 				   rz.m[1][3] = 0;
@@ -114,7 +122,7 @@ export function this.matrix4f() {
 	this.rotate = function rotate(angle, axis) {		
 		var c = Math.cos(angle);
 		var s = Math.sin(angle);
-		var oneminusc = 1.0f - c;
+		var oneminusc = 1.0 - c;
 		var xy = axis.x * axis.y;
 		var yz = axis.y * axis.z;
 		var xz = axis.x * axis.z;
@@ -214,87 +222,51 @@ export function this.matrix4f() {
 		return matrix;
 	}
 	
-	public static Matrix4f mul(Matrix4f left, Matrix4f right, Matrix4f dest){
-		if(dest == null) {
-			
-		}
-		dest.m[0][0] = left.m[0][0] * right.m[0][0] + left.m[1][0] * right.m[0][1] + left.m[2][0] * right.m[0][2] + left.m[3][0] * right.m[0][3];
-		dest.m[0][1] = left.m[0][1] * right.m[0][0] + left.m[1][1] * right.m[0][1] + left.m[2][1] * right.m[0][2] + left.m[3][1] * right.m[0][3];
-		dest.m[0][2] = left.m[0][2] * right.m[0][0] + left.m[1][2] * right.m[0][1] + left.m[2][2] * right.m[0][2] + left.m[3][2] * right.m[0][3];
-		dest.m[0][3] = left.m[0][3] * right.m[0][0] + left.m[1][3] * right.m[0][1] + left.m[2][3] * right.m[0][2] + left.m[3][3] * right.m[0][3];
-		dest.m[1][0] = left.m[0][0] * right.m[1][0] + left.m[1][0] * right.m[1][1] + left.m[2][0] * right.m[1][2] + left.m[3][0] * right.m[1][3];
-		dest.m[1][1] = left.m[0][1] * right.m[1][0] + left.m[1][1] * right.m[1][1] + left.m[2][1] * right.m[1][2] + left.m[3][1] * right.m[1][3];
-		dest.m[1][2] = left.m[0][2] * right.m[1][0] + left.m[1][2] * right.m[1][1] + left.m[2][2] * right.m[1][2] + left.m[3][2] * right.m[1][3];
-		dest.m[1][3] = left.m[0][3] * right.m[1][0] + left.m[1][3] * right.m[1][1] + left.m[2][3] * right.m[1][2] + left.m[3][3] * right.m[1][3];
-		dest.m[2][0] = left.m[0][0] * right.m[2][0] + left.m[1][0] * right.m[2][1] + left.m[2][0] * right.m[2][2] + left.m[3][0] * right.m[2][3];
-		dest.m[2][1] = left.m[0][1] * right.m[2][0] + left.m[1][1] * right.m[2][1] + left.m[2][1] * right.m[2][2] + left.m[3][1] * right.m[2][3];
-		dest.m[2][2] = left.m[0][2] * right.m[2][0] + left.m[1][2] * right.m[2][1] + left.m[2][2] * right.m[2][2] + left.m[3][2] * right.m[2][3];
-		dest.m[2][3] = left.m[0][3] * right.m[2][0] + left.m[1][3] * right.m[2][1] + left.m[2][3] * right.m[2][2] + left.m[3][3] * right.m[2][3];
-		dest.m[3][0] = left.m[0][0] * right.m[3][0] + left.m[1][0] * right.m[3][1] + left.m[2][0] * right.m[3][2] + left.m[3][0] * right.m[3][3];
-		dest.m[3][1] = left.m[0][1] * right.m[3][0] + left.m[1][1] * right.m[3][1] + left.m[2][1] * right.m[3][2] + left.m[3][1] * right.m[3][3];
-		dest.m[3][2] = left.m[0][2] * right.m[3][0] + left.m[1][2] * right.m[3][1] + left.m[2][2] * right.m[3][2] + left.m[3][2] * right.m[3][3];
-		dest.m[3][3] = left.m[0][3] * right.m[3][0] + left.m[1][3] * right.m[3][1] + left.m[2][3] * right.m[3][2] + left.m[3][3] * right.m[3][3];
-
-		return dest;
-	}
-	
-	public Quaternion mul(Quaternion v)
-	{
-		Quaternion res = new Quaternion(0,0,0,0);
+	this.traspose = function transpose() {
+		var result = new Matrix4f();
 		
-		res.setX(m[0][0] * v.getX() + m[0][1] * v.getY() + m[0][2] * v.getZ() + m[0][3] * v.getW());
-		res.setY(m[1][0] * v.getX() + m[1][1] * v.getY() + m[1][2] * v.getZ() + m[1][3] * v.getW());
-		res.setZ(m[2][0] * v.getX() + m[2][1] * v.getY() + m[2][2] * v.getZ() + m[2][3] * v.getW());
-		res.setW(m[3][0] * v.getX() + m[3][1] * v.getY() + m[3][2] * v.getZ() + m[3][3] * v.getW());
-		
-		return res;
-	}
-	
-	public Matrix4f transpose()
-	{
-		Matrix4f result = new Matrix4f();
-		
-		for(int i=0; i<4; i++){
-			for(int j=0; j<4; j++){
+		for(var i=0; i<4; i++){
+			for(var j=0; j<4; j++){
 				result.set(i, j, get(j,i));
 			}
 		}
 		return result;
 	}
-	public static Matrix4f invert(Matrix4f src, Matrix4f dest) {
-		float determinant = src.determinant();
+	
+	this.invert = function invert(src, dest) {
+		var determinant = src.determinant();
 
-		if (determinant != 0) {
+		if (!determinant) {
 			/*
 			 * m00 m01 m02 m03
 			 * m10 m11 m12 m13
 			 * m20 m21 m22 m23
 			 * m30 m31 m32 m33
 			 */
-			if (dest == null)
+			if (!dest)
 				dest = new Matrix4f();
-			float determinant_inv = 1f/determinant;
+			var determinant_inv = 1 / determinant;
 
 			// first row
-			float t00 =  determinant3x3(src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			float t01 = -determinant3x3(src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			float t02 =  determinant3x3(src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			float t03 = -determinant3x3(src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t00 =  determinant3x3(src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t01 = -determinant3x3(src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t02 =  determinant3x3(src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t03 = -determinant3x3(src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// second row
-			float t10 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			float t11 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			float t12 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			float t13 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t10 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t11 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t12 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t13 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// third row
-			float t20 =  determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			float t21 = -determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			float t22 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			float t23 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t20 =  determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t21 = -determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t22 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t23 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// fourth row
-			float t30 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3]);
-			float t31 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3]);
-			float t32 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3]);
-			float t33 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2]);
+			var t30 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3]);
+			var t31 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3]);
+			var t32 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3]);
+			var t33 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2]);
 
 			// transpose and divide by the determinant
 			dest.m[0][0] = t00*determinant_inv;
@@ -318,51 +290,48 @@ export function this.matrix4f() {
 			return null;
 	}
 	
-	private static float determinant3x3(float t00, float t01, float t02,
-		     float t10, float t11, float t12,
-		     float t20, float t21, float t22)
-	{
+	this.determinant3x3 = function determinant3x3(t00, t01, t02,
+		     t10, t11, t12,
+		     t20, t21, t22)	{
 		return   t00 * (t11 * t22 - t12 * t21)
 		      + t01 * (t12 * t20 - t10 * t22)
 		      + t02 * (t10 * t21 - t11 * t20);
 	}
 	
-	public float determinant() {
-		float f =
-			m[0][0]
-				* ((m[1][1] * m[2][2] * m[3][3] + m[1][2] * m[2][3] * m[3][1] + m[1][3] * m[2][1] * m[3][2])
-					- m[1][3] * m[2][2] * m[3][1]
-					- m[1][1] * m[2][3] * m[3][2]
-					- m[1][2] * m[2][1] * m[3][3]);
-		f -= m[0][1]
-			* ((m[1][0] * m[2][2] * m[3][3] + m[1][2] * m[2][3] * m[3][0] + m[1][3] * m[2][0] * m[3][2])
-				- m[1][3] * m[2][2] * m[3][0]
-				- m[1][0] * m[2][3] * m[3][2]
-				- m[1][2] * m[2][0] * m[3][3]);
-		f += m[0][2]
-			* ((m[1][0] * m[2][1] * m[3][3] + m[1][1] * m[2][3] * m[3][0] + m[1][3] * m[2][0] * m[3][1])
-				- m[1][3] * m[2][1] * m[3][0]
-				- m[1][0] * m[2][3] * m[3][1]
-				- m[1][1] * m[2][0] * m[3][3]);
-		f -= m[0][3]
-			* ((m[1][0] * m[2][1] * m[3][2] + m[1][1] * m[2][2] * m[3][0] + m[1][2] * m[2][0] * m[3][1])
-				- m[1][2] * m[2][1] * m[3][0]
-				- m[1][0] * m[2][2] * m[3][1]
-				- m[1][1] * m[2][0] * m[3][2]);
+	this.determinant = function determinant() {
+		var f =
+			this.m[0][0]
+				* ((this.m[1][1] * this.m[2][2] * this.m[3][3] + this.m[1][2] * this.m[2][3] * this.m[3][1] + this.m[1][3] * this.m[2][1] * this.m[3][2])
+					- this.m[1][3] * this.m[2][2] * this.m[3][1]
+					- this.m[1][1] * this.m[2][3] * this.m[3][2]
+					- this.m[1][2] * this.m[2][1] * this.m[3][3]);
+		f -= this.m[0][1]
+			* ((this.m[1][0] * this.m[2][2] * this.m[3][3] + this.m[1][2] * this.m[2][3] * this.m[3][0] + this.m[1][3] * this.m[2][0] * this.m[3][2])
+				- this.m[1][3] * this.m[2][2] * this.m[3][0]
+				- this.m[1][0] * this.m[2][3] * this.m[3][2]
+				- this.m[1][2] * this.m[2][0] * this.m[3][3]);
+		f += this.m[0][2]
+			* ((this.m[1][0] * this.m[2][1] * this.m[3][3] + this.m[1][1] * this.m[2][3] * this.m[3][0] + this.m[1][3] * this.m[2][0] * this.m[3][1])
+				- this.m[1][3] * this.m[2][1] * this.m[3][0]
+				- this.m[1][0] * this.m[2][3] * this.m[3][1]
+				- this.m[1][1] * this.m[2][0] * this.m[3][3]);
+		f -= this.m[0][3]
+			* ((this.m[1][0] * this.m[2][1] * this.m[3][2] + this.m[1][1] * this.m[2][2] * this.m[3][0] + this.m[1][2] * this.m[2][0] * this.m[3][1])
+				- this.m[1][2] * this.m[2][1] * this.m[3][0]
+				- this.m[1][0] * this.m[2][2] * this.m[3][1]
+				- this.m[1][1] * this.m[2][0] * this.m[3][2]);
 		return f;
 	}
 	
-	public static Matrix4f invert(Matrix4f matrix)
-	{
-		return invert(matrix, null);
+	this.invert = function invert(matrix) {
+		return this.invert(matrix, null);
 	}
 	
-	public Matrix4f invert()
-	{
-		return invert(this, null);
+	this.invert = function invert() {
+		return this.invert(this, null);
 	}
 	
-	public boolean equals(Matrix4f m){
+	this.quals = function equals(m) {
 		if (this.m[0][0] == m.getM()[0][0] && this.m[0][1] == m.getM()[0][1] &&
 			this.m[0][2] == m.getM()[0][2] && this.m[0][3] == m.getM()[0][3] &&
 			this.m[1][0] == m.getM()[1][0] && this.m[1][1] == m.getM()[1][1] &&
@@ -376,18 +345,16 @@ export function this.matrix4f() {
 			return false;	
 	}
 	
-	public void set(int x, int y, float value)
-	{
+	this.set = function set(x, y, value) {
 		this.m[x][y] = value;
 	}
 	
-	public float get(int x, int y)
-	{
+	this.get = function get(x, y) {
 		return  this.m[x][y];
 	}
 
-	public float [][] getM() {
-		return m;
+	this.getM = function getM() {
+		return this.m;
 	}
 	
 	/**
@@ -397,30 +364,30 @@ export function this.matrix4f() {
 	 * @param buf A float buffer to read from
 	 * @return this
 	 */
-	public Matrix4f load(FloatBuffer buf) {
+	this.loadBuffer = function loadBuffer(buf) {
 
-		m[0][0] = buf.get();
-		m[0][1] = buf.get();
-		m[0][2] = buf.get();
-		m[0][3] = buf.get();
-		m[1][0] = buf.get();
-		m[1][1] = buf.get();
-		m[1][2] = buf.get();
-		m[1][3] = buf.get();
-		m[2][0] = buf.get();
-		m[2][1] = buf.get();
-		m[2][2] = buf.get();
-		m[2][3] = buf.get();
-		m[3][0] = buf.get();
-		m[3][1] = buf.get();
-		m[3][2] = buf.get();
-		m[3][3] = buf.get();
+		this.m[0][0] = buf.get();
+		this.m[0][1] = buf.get();
+		this.m[0][2] = buf.get();
+		this.m[0][3] = buf.get();
+		this.m[1][0] = buf.get();
+		this.m[1][1] = buf.get();
+		this.m[1][2] = buf.get();
+		this.m[1][3] = buf.get();
+		this.m[2][0] = buf.get();
+		this.m[2][1] = buf.get();
+		this.m[2][2] = buf.get();
+		this.m[2][3] = buf.get();
+		this.m[3][0] = buf.get();
+		this.m[3][1] = buf.get();
+		this.m[3][2] = buf.get();
+		this.m[3][3] = buf.get();
 
 		return this;
 	}
 	
-	public void load(float [][] m) {
-		this.m = m;
+	this.load = function load(matrix) {
+		this.m = matrix;
 	}
 	
 	/**
@@ -428,23 +395,23 @@ export function this.matrix4f() {
 	 * major (openGL) order.
 	 * @param buf The buffer to store this matrix in
 	 */
-	public Matrix4f store(FloatBuffer buf) {
-		buf.put(m[0][0]);
-		buf.put(m[0][1]);
-		buf.put(m[0][2]);
-		buf.put(m[0][3]);
-		buf.put(m[1][0]);
-		buf.put(m[1][1]);
-		buf.put(m[1][2]);
-		buf.put(m[1][3]);
-		buf.put(m[2][0]);
-		buf.put(m[2][1]);
-		buf.put(m[2][2]);
-		buf.put(m[2][3]);
-		buf.put(m[3][0]);
-		buf.put(m[3][1]);
-		buf.put(m[3][2]);
-		buf.put(m[3][3]);
+	this.store = function store(buf) {
+		buf.push(this.m[0][0]);
+		buf.push(this.m[0][1]);
+		buf.push(this.m[0][2]);
+		buf.push(this.m[0][3]);
+		buf.push(this.m[1][0]);
+		buf.push(this.m[1][1]);
+		buf.push(this.m[1][2]);
+		buf.push(this.m[1][3]);
+		buf.push(this.m[2][0]);
+		buf.push(this.m[2][1]);
+		buf.push(this.m[2][2]);
+		buf.push(this.m[2][3]);
+		buf.push(this.m[3][0]);
+		buf.push(this.m[3][1]);
+		buf.push(this.m[3][2]);
+		buf.push(this.m[3][3]);
 		
 		return this;
 	}
@@ -452,44 +419,12 @@ export function this.matrix4f() {
 	/**
 	 * Verticle visualization
 	 */
-	public String toString() {
+	this.toString = function toString() {
 		
-		return 	"|" + m[0][0] + " " + m[1][0] + " " + m[2][0] + " " + m[3][0] + "|\n" +
-				"|" + m[0][1] + " " + m[1][1] + " " + m[2][1] + " " + m[3][1] + "|\n" +
-				"|" + m[0][2] + " " + m[1][2] + " " + m[2][2] + " " + m[3][2] + "|\n" +
-				"|" + m[0][3] + " " + m[1][3] + " " + m[2][3] + " " + m[3][3] + "|";
-	}
-	
-//	/**
-//	 * Horizontal visualization
-//	 */
-//	public String toString() {
-//		
-//		return 	"|" + m[0][0] + " " + m[0][1] + " " + m[0][2] + " " + m[0][3] + "|\n" +
-//				"|" + m[1][0] + " " + m[1][1] + " " + m[1][2] + " " + m[1][3] + "|\n" +
-//				"|" + m[2][0] + " " + m[2][1] + " " + m[2][2] + " " + m[2][3] + "|\n" +
-//				"|" + m[3][0] + " " + m[3][1] + " " + m[3][2] + " " + m[3][3] + "|";
-//	}
-	
-	public Matrix4f load(Matrix4f matrix) {
-		this.m[0][0] = matrix.m[0][0];
-		this.m[0][1] = matrix.m[0][1];
-		this.m[0][2] = matrix.m[0][2];
-		this.m[0][3] = matrix.m[0][3];
-		this.m[1][0] = matrix.m[1][0];
-		this.m[1][1] = matrix.m[1][1];
-		this.m[1][2] = matrix.m[1][2];
-		this.m[1][3] = matrix.m[1][3];
-		this.m[2][0] = matrix.m[2][0];
-		this.m[2][1] = matrix.m[2][1];
-		this.m[2][2] = matrix.m[2][2];
-		this.m[2][3] = matrix.m[2][3];
-		this.m[3][0] = matrix.m[3][0];
-		this.m[3][1] = matrix.m[3][1];
-		this.m[3][2] = matrix.m[3][2];
-		this.m[3][3] = matrix.m[3][3];
-		
-		return this;
+		return 	"|" + this.m[0][0] + " " + this.m[1][0] + " " + this.m[2][0] + " " + this.m[3][0] + "|\n" +
+				"|" + this.m[0][1] + " " + this.m[1][1] + " " + this.m[2][1] + " " + this.m[3][1] + "|\n" +
+				"|" + this.m[0][2] + " " + this.m[1][2] + " " + this.m[2][2] + " " + this.m[3][2] + "|\n" +
+				"|" + this.m[0][3] + " " + this.m[1][3] + " " + this.m[2][3] + " " + this.m[3][3] + "|";
 	}
 	
 	

@@ -1,4 +1,6 @@
 import {Loop} from "./engine/core/Loop";
+import {initExtentions} from "./engine/core/Extentions";
+import {initTools, maths} from "./engine/core/Tools";
 
 export var gl;
 
@@ -30,11 +32,14 @@ window.onload = function() {
 	if(gl) {
 		gl.viewportHeight = canvas.height;
 		gl.viewportWidth = canvas.width;
-		gl.haveVAOs = getAndApplyExtension(gl, "OES_vertex_array_object");
+		initExtentions();
+		initTools();
 		console.dir(gl); // see all webgl objects
 	// start engine	
-		var loop = new Loop();		
-		loop.update();
+		var loop = new Loop();
+		for(var i = 0; i < 100; i++) {
+			loop.update();
+		}
 		loop.stop();
 	}
 }
@@ -46,20 +51,14 @@ function getAndApplyExtension(gl, name) {
 	    return false;
 	  }
 	  var suffix = name.split("_")[0];
-	  var prefix = suffix = '_';
+	  var prefix = suffix + '_';
 	  var suffixRE = new RegExp(suffix + '$');
 	  var prefixRE = new RegExp('^' + prefix);
 	  for (var key in ext) {
 	    var val = ext[key];
-	    if (typeof(val) === 'function') {
-	      // remove suffix (eg: bindVertexArrayOES -> bindVertexArray)
-	      var unsuffixedKey = key.replace(suffixRE, '');
-	      if (key.substing) {
-	    	  gl[unprefixedKey] = ext[key].bind(ext);
-	      } else {
-		      var unprefixedKey = key.replace(prefixRE, '');
-		      gl[unprefixedKey] = ext[key];
-	      }
+	    if(typeof(val) === 'function') {
+	    	var unsuffixedKey = key.replace(suffixRE, '');
+	    	gl[unsuffixedKey] = ext[key].bind(ext);
 	    }
 	  }
 	  return true;

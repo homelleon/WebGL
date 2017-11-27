@@ -6,7 +6,7 @@ html
 	title WebGL Testing
 	body
 		div(id="shader-fs" style="visibility:hidden") void main(void) { gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); }
-		div(id="shader-vs" style="visibility:hidden") attribute vec3 aVertexPosition; void main(void) { gl_Position = vec4(aVertexPosition, 1.0); }
+		div(id="shader-vs" style="visibility:hidden") attribute vec3 in_position; uniform mat4 projectionMatrix; uniform mat4 viewMatrix; void main(void) { gl_Position = viewMatrix * vec4(in_position, 1.0); }
 		h1 WebGL
 		canvas(id="gl", width="1024px", height="768px")
 		img(src=require("./crate.png") width="100")

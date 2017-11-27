@@ -6,6 +6,7 @@ export function ShaderProgram() {
 	const FRAGMENT_SHADER = 'shader-fs';
 	
 	this.programID = gl.createProgram();
+	this.uniforms = [];
 
 	
 	if(!this.programID) {
@@ -99,14 +100,26 @@ export function ShaderProgram() {
 		gl.uniform1f(uniformLocation, value);
 	}
 	
+	this.load4DVector = function load4DVector(name, vector) {
+		var uniformLocation = this.uniforms[name];
+		gl.uniform4f(uniformLocation, vector.x, vector.y, vector.z, vector.w);
+	}
+	
 	this.load3DVector = function load3DVector(name, vector) {
 		var uniformLocation = this.uniforms[name];
 		gl.uniform3f(uniformLocation, vector.x, vector.y, vector.z);
 	}
 	
 	this.load2DVector = function load2DVector(name, vector) {
-		var uniforomLocation = this.uniforms[name];
+		var uniformLocation = this.uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
+	}
+	
+	this.loadMatrix = function loadMatrix(name, matrix) {
+		var uniformLocation = this.uniforms[name];
+		var matrixBuffer = [];
+		matrix.store(matrixBuffer);
+		gl.uniformMatrix4fv(uniformLocation, false, matrixBuffer);
 	}
 	
 	this.bindAttributes = function bindAttributes() {}
