@@ -4,9 +4,7 @@ import {initTools, maths} from "./engine/core/Tools";
 
 var gl;
 
-window.onload = runEngine();
-
-function runEngine() {
+window.onload = (function() {
 	var canvas = document.getElementById("gl");
 	
 	// initialize webgl
@@ -34,6 +32,6 @@ function runEngine() {
 		}
 		loop.stop();
 	}
-}
+})();
 
 export {gl};
