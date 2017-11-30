@@ -1,7 +1,7 @@
 import {gl} from  "./../../index.js";
 import {VBO} from './../primitive/VBO';
 
-export function VAO() {
+function VAO() {
 	// initialization
 	this.object = gl.createVertexArray();
 	
@@ -54,3 +54,5 @@ export function VAO() {
 		gl.deleteVertexArray(this.object);
 	}
 }
+
+export {VAO};

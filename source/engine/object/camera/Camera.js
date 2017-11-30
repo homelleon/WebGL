@@ -1,7 +1,7 @@
 import {Vector3f} from './../../math/vector/Vector3f';
 import {Matrix4f} from './../../math/matrix/Matrix4f';
 
-export function Camera() {
+function Camera() {
 	this.position = new Vector3f(0, 0, 0); 
 	this.pitch = 20;
 	this.yaw = 0;
@@ -19,3 +19,5 @@ export function Camera() {
 		return viewMatrix;
 	}
 }
+
+export {Camera};

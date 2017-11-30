@@ -1,6 +1,6 @@
 import {gl} from "./../../index.js";
 
-export function ShaderProgram() {
+function ShaderProgram() {
 	// initialization
 	const VERTEX_SHADER = 'shader-vs';
 	const FRAGMENT_SHADER = 'shader-fs';
@@ -70,7 +70,6 @@ export function ShaderProgram() {
 		return shaderID;
 	}
 	
-	
 	this.addVertexShader = function addVertexShader(text) {
 		this.vertexShaderID = this.loadShader(text, gl.VERTEX_SHADER);
 	}
@@ -88,6 +87,10 @@ export function ShaderProgram() {
 		}
 		
 		this.uniforms[name] = uniformLocation;
+	}
+	
+	this.getUniformLocation = function getUniformLocation(name) {
+		return gl.getUniformLocation(this.programID, name);
 	}
 	
 	this.loadInt = function loadInt(name, value) {
@@ -132,3 +135,5 @@ export function ShaderProgram() {
 		gl.bindFragDataLocation(this.programID, attribute, name);
 	}
 }
+
+export {ShaderProgram};

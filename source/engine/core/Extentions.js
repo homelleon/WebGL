@@ -1,6 +1,6 @@
 import {gl} from  "./../../index.js";
 
-export function initExtentions() {
+function initExtentions() {
 	applyExtention("OES_vertex_array_object"); // VAO
 };
 
@@ -23,3 +23,5 @@ function applyExtention(name) {
 	  }
 	  return true;
 };
+
+export {initExtentions};

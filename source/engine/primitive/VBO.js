@@ -1,6 +1,6 @@
 import {gl} from  "./../../index.js";
 
-export function VBO(type) {
+function VBO(type) {
 	// initialization
 	this.object = gl.createBuffer();
 	this.type = type;
@@ -33,3 +33,5 @@ export function VBO(type) {
 	
 	
 }
+
+export {VBO};

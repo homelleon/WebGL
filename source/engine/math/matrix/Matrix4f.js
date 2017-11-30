@@ -1,4 +1,4 @@
-export function Matrix4f() {
+function Matrix4f() {
 	this.m = [];
 	this.setIdentity;
 	
@@ -429,3 +429,5 @@ export function Matrix4f() {
 	
 	
 }
+
+export {Matrix4f};

@@ -1,7 +1,10 @@
 import {ShaderProgram} from './ShaderProgram';
 
-export function TestShader() {
+function TestShader(projectionMatrix) {
+	// initialization
 	this.__proto__ = new ShaderProgram();
+	this.projectionMatrix = projectionMatrix;
+	
 	//----programs
 	const VERTEX_FILE = 'shader-vs';	
 	const FRAGMENT_FILE = 'shader-fs';
@@ -18,6 +21,12 @@ export function TestShader() {
 		this.bindAttribute(0, ATTRIBUTE_POSITION);
 	}
 	
+	// @override
+	this.loadUniformLocations = function loadUniformLocations() {
+		this.addUniform(UNIFORM_PROJECTION_MATRIX);
+		this.addUniform(UNIFORM_VIEW_MATRIX);
+	}
+	
 	this.loadProjectionMatrix = function loadProjectionMatrix(matrix) {
 		this.loadMatrix(UNIFORM_PROJECTION_MATRIX, matrix);
 	}
@@ -31,3 +40,5 @@ export function TestShader() {
 	this.addFragmentShader(FRAGMENT_FILE);
 	this.compileShaders();
 }
+
+export {TestShader};

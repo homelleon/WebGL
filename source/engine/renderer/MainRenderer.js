@@ -1,9 +1,14 @@
 import {gl} from  "./../../index.js";
 import {TestRenderer} from './TestRenderer';
 
-export function MainRenderer() {
+function MainRenderer() {
+	const FOV = 70;
+	const farPlane = 10000;
+	const nearPlane = 0.1;
 	// initialization
-	this.testRenderer = new TestRenderer();
+	this.projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
+	
+	this.testRenderer = new TestRenderer(this.projectionMatrix);
 	
 	// methods
 	this.render = function render() {
@@ -18,3 +23,5 @@ export function MainRenderer() {
 	}
 	
 }
+
+export {MainRenderer};
