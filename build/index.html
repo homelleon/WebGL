@@ -5,8 +5,10 @@
   <meta name="viewport" content="initial-scale=1.0" width="device-width">
   <title>WebGL Testing</title>
   <body>
-    <div id="shader-fs" style="visibility:hidden;">void main(void) { gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); }</div>
-    <div id="shader-vs" style="visibility:hidden;">attribute vec3 aVertexPosition; void main(void) { gl_Position = vec4(aVertexPosition, 1.0); }</div>
+    <div id="shaders" style="visibility:hidden;">
+      <div id="shader-fs">void main(void) { gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0); }</div>
+      <div id="shader-vs">attribute vec3 in_position; uniform mat4 projectionMatrix; uniform mat4 viewMatrix; void main(void) { gl_Position = viewMatrix * projectionMatrix * vec4(in_position, 1.0);}</div>
+    </div>
     <h1>WebGL</h1>
     <canvas id="gl" width="1024px" height="768px"></canvas><img src="images/crate.png" width="100">
   <script type="text/javascript" src="main.js"></script></body>

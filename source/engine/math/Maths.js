@@ -1,4 +1,6 @@
 import {Matrix4f} from './matrix/Matrix4f';
+import {Vector3f} from './vector/Vector3f';
+import {gl} from './../../index';
 
 function Maths() {
 	const PI = 3.14;
@@ -24,7 +26,22 @@ function Maths() {
 		projectionMatrix.m[3][3] = 0; 
 		
 		return projectionMatrix;
+		
 	}
+	
+	this.createViewMatrix = function createViewMatrix(camera) {
+		var viewMatrix = new Matrix4f();
+		viewMatrix.setIdentity();
+		viewMatrix.rotate(Math.toRadians(camera.pitch), new Vector3f(1, 0, 0));
+		viewMatrix.rotate(Math.toRadians(camera.yaw), new Vector3f(0, 1, 0));
+		viewMatrix.rotate(Math.toRadians(camera.roll), new Vector3f(0, 0, 1));
+		var negativeCameraPosition = new Vector3f(
+				-camera.position.x, -camera.position.y, -camera.position.z);
+		viewMatrix.translate3f(negativeCameraPosition);
+		
+		return viewMatrix;
+	}
+	
 	
 }
 

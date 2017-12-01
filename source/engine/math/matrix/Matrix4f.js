@@ -1,12 +1,14 @@
+/**
+ * Representation of mathematical 4-dimentional matrix.
+ */
 function Matrix4f() {
-	this.m = [];
+	this.m = [[],[],[],[]];
 	this.setIdentity;
 	
+	/**
+	 * Makes current matrix zero.
+	 */
 	this.zero = function zero() {
-		this.m[0] = [];
-		this.m[1] = [];
-		this.m[2] = [];
-		this.m[3] = [];
 		this.m[0][0] = 0; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 0; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 0; this.m[2][3] = 0;
@@ -15,11 +17,10 @@ function Matrix4f() {
 		return this;
 	}
 	
+	/**
+	 * Makes current matrix indentity.
+	 */
 	this.setIdentity = function setIdentity() {
-		this.m[0] = [];
-		this.m[1] = [];
-		this.m[2] = [];
-		this.m[3] = [];
 		this.m[0][0] = 1; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 1; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 1; this.m[2][3] = 0;

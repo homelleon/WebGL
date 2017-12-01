@@ -1,25 +1,35 @@
 import {gl} from  "./../../index.js";
-import {TestRenderer} from './TestRenderer';
+import {EntityRenderer} from './EntityRenderer';
 
+/**
+ * Main enigine rendering function. 
+ */
 function MainRenderer() {
-	const FOV = 70;
-	const farPlane = 10000;
+	const FOV = 120;
 	const nearPlane = 0.1;
+	const farPlane = 10000;
 	// initialization
-	this.projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
+	var projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
 	
-	this.testRenderer = new TestRenderer(this.projectionMatrix);
+	var entityRenderer = new EntityRenderer(projectionMatrix);
 	
 	// methods
-	this.render = function render() {
+	/**
+	 * Renders scene objects.
+	 * @param scene - engine scene
+	 */
+	this.render = function render(scene) {
 		gl.clearColor(1.0, 0.0, 0.0, 0.5);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-		this.testRenderer.render();
+		entityRenderer.render(scene);
 	}
 	
+	/**
+	 * Clears rendering engine.
+	 */
 	this.clean = function clean() {
-		this.testRenderer.clean();
+		entityRenderer.clean();
 	}
 	
 }

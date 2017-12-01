@@ -7,6 +7,7 @@ const devserver = require('./webpack/devserver');
 const images = require('./webpack/images');
 const babel = require('./webpack/babel');
 const plugins = require('./webpack/plugins');
+const shaders = require('./webpack/shaders');
 
 const PATHS = {
 	source: path.join(__dirname, 'source'),
@@ -21,7 +22,8 @@ module.exports = function(env) {
 			plugins(PATHS),
 			babel(),
 			pug(),
-			images()
+			images(),
+			shaders()
 		]);
 	}
 	if(env === 'test') {
@@ -37,6 +39,7 @@ module.exports = function(env) {
 			babel(),
 			pug(),
 			images(),
+			shaders(),
 			devserver()
 		])
 	}

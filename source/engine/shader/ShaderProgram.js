@@ -1,10 +1,7 @@
 import {gl} from "./../../index.js";
 
 function ShaderProgram() {
-	// initialization
-	const VERTEX_SHADER = 'shader-vs';
-	const FRAGMENT_SHADER = 'shader-fs';
-	
+	// initialization	
 	this.programID = gl.createProgram();
 	this.uniforms = [];
 
@@ -56,9 +53,8 @@ function ShaderProgram() {
 		this.loadUniformLocations();
 	}
 	
-	this.loadShader = function loadShader(file, type) {
+	this.loadShader = function loadShader(source, type) {
 		var shaderID = gl.createShader(type);
-		var source = document.getElementById(file).innerHTML;
 		gl.shaderSource(shaderID, source);
 		gl.compileShader(shaderID);
 		if(!gl.getShaderParameter(shaderID, gl.COMPILE_STATUS)) {
