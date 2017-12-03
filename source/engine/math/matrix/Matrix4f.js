@@ -8,7 +8,7 @@ function Matrix4f() {
 	/**
 	 * Makes current matrix zero.
 	 */
-	this.zero = function zero() {
+	this.zero = function() {
 		this.m[0][0] = 0; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 0; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 0; this.m[2][3] = 0;
@@ -20,7 +20,7 @@ function Matrix4f() {
 	/**
 	 * Makes current matrix indentity.
 	 */
-	this.setIdentity = function setIdentity() {
+	this.setIdentity = function() {
 		this.m[0][0] = 1; this.m[0][1] = 0; this.m[0][2] = 0; this.m[0][3] = 0;
 		this.m[1][0] = 0; this.m[1][1] = 1; this.m[1][2] = 0; this.m[1][3] = 0;
 		this.m[2][0] = 0; this.m[2][1] = 0; this.m[2][2] = 1; this.m[2][3] = 0;
@@ -29,7 +29,7 @@ function Matrix4f() {
 		return this;
 	}
 	
-	this.orthographic2D = function Orthographic2D(width, height) {
+	this.orthographic2D = function(width, height) {
 		this.m[0][0] = 2 / width; this.m[0][1] = 0; 		  this.m[0][2] = 0; this.m[0][3] = -1;
 		this.m[1][0] = 0;		   this.m[1][1] = 2 / height; this.m[1][2] = 0; this.m[1][3] = -1;
 		this.m[2][0] = 0; 		   this.m[2][1] = 0; 		  this.m[2][2] = 1; this.m[2][3] =  0;
@@ -41,7 +41,7 @@ function Matrix4f() {
 	/**
 	 * Translates current matrix by argument of Vector3f translation object.
 	 */
-	this.translate3f = function translate3f(translation) {
+	this.translate3f = function(translation) {
 		this.m[3][0] += this.m[0][0] * translation.x + this.m[1][0] * translation.y + this.m[2][0] * translation.z;
 		this.m[3][1] += this.m[0][1] * translation.x + this.m[1][1] * translation.y + this.m[2][1] * translation.z;
 		this.m[3][2] += this.m[0][2] * translation.x + this.m[1][2] * translation.y + this.m[2][2] * translation.z;
@@ -53,7 +53,7 @@ function Matrix4f() {
 	/**
 	 * Translates current matrix by argument of Vector2f translation object.
 	 */
-	this.translate2f = function translate2f(translation) {		
+	this.translate2f = function(translation) {		
 		this.m[3][0] += this.m[0][0] * translation.x + this.m[1][0] * translation.y;
 		this.m[3][1] += this.m[0][1] * translation.x + this.m[1][1] * translation.y;
 		this.m[3][2] += this.m[0][2] * translation.x + this.m[1][2] * translation.y;
@@ -65,7 +65,7 @@ function Matrix4f() {
 	/**
 	 * Creates tranformation plane from current matrix by argument of Vector4f plane object.
 	 */
-	this.transform = function transform(plane) {
+	this.transform = function(plane) {
 		var x = this.m[0][0] * plane.x + this.m[1][0] * plane.y + this.m[2][0] * plane.z + this.m[3][0] * plane.w;
 		var y = this.m[0][1] * plane.x + this.m[1][1] * plane.y + this.m[2][1] * plane.z + this.m[3][1] * plane.w;
 		var z = this.m[0][2] * plane.x + this.m[1][2] * plane.y + this.m[2][2] * plane.z + this.m[3][2] * plane.w;
@@ -75,7 +75,7 @@ function Matrix4f() {
 	}
 	
 	//TODO: need to be static
-	this.transform = function transform(matrix, plane) {
+	this.transform = function(matrix, plane) {
 		var x = matrix.m[0][0] * plane.x + matrix.m[1][0] * plane.y + matrix.m[2][0] * plane.z + matrix.m[3][0] * plane.w;
 		var y = matrix.m[0][1] * plane.x + matrix.m[1][1] * plane.y + matrix.m[2][1] * plane.z + matrix.m[3][1] * plane.w;
 		var z = matrix.m[0][2] * plane.x + matrix.m[1][2] * plane.y + matrix.m[2][2] * plane.z + matrix.m[3][2] * plane.w;
@@ -87,7 +87,7 @@ function Matrix4f() {
 	/**
 	 * Rotates by argument of vector3f rotation object.
 	 */
-	this.rotate = function rotate(rotation) {
+	this.rotate = function(rotation) {
 		var rx = new Matrix4f();
 		var ry = new Matrix4f();
 		var rz = new Matrix4f();
@@ -120,7 +120,7 @@ function Matrix4f() {
 	/**
 	 * Rotates current matrix by arguments of rotation angle and axis.
 	 */
-	this.rotate = function rotate(angle, axis) {		
+	this.rotate = function(angle, axis) {		
 		var c = Math.cos(angle);
 		var s = Math.sin(angle);
 		var oneminusc = 1.0 - c;
@@ -172,7 +172,7 @@ function Matrix4f() {
 	/**
 	 * Scales current matrix by argument Vector2f object
 	 */
-	this.scale = function scale(scaling) {
+	this.scale = function(scaling) {
 		this.m[0][0] = this.m[0][0] * scaling.x;
 		this.m[0][1] = this.m[0][1] * scaling.x;
 		this.m[0][2] = this.m[0][2] * scaling.x;
@@ -192,7 +192,7 @@ function Matrix4f() {
 	/**
 	 * Multiplies current matrix by argument matrix.
 	 */
-	this.mul = function mul(matrix) {
+	this.mul = function(matrix) {
 		
 		return this.load(this.mul(this, matrix));
 	}
@@ -201,7 +201,7 @@ function Matrix4f() {
 	/**
 	 * Gets result of multiplication of two matrices.
 	 */
-	this.mul = function mul(left, right) {
+	this.mul = function(left, right) {
 		var matrix = new Matrix4f();
 		matrix.m[0][0] = left.m[0][0] * right.m[0][0] + left.m[1][0] * right.m[0][1] + left.m[2][0] * right.m[0][2] + left.m[3][0] * right.m[0][3];
 		matrix.m[0][1] = left.m[0][1] * right.m[0][0] + left.m[1][1] * right.m[0][1] + left.m[2][1] * right.m[0][2] + left.m[3][1] * right.m[0][3];
@@ -223,7 +223,7 @@ function Matrix4f() {
 		return matrix;
 	}
 	
-	this.traspose = function transpose() {
+	this.traspose = function() {
 		var result = new Matrix4f();
 		
 		for(var i=0; i<4; i++){
@@ -234,7 +234,7 @@ function Matrix4f() {
 		return result;
 	}
 	
-	this.invert = function invert(src, dest) {
+	this.invert = function(src, dest) {
 		var determinant = src.determinant();
 
 		if (!determinant) {
@@ -291,7 +291,7 @@ function Matrix4f() {
 			return null;
 	}
 	
-	this.determinant3x3 = function determinant3x3(t00, t01, t02,
+	this.determinant3x3 = function(t00, t01, t02,
 		     t10, t11, t12,
 		     t20, t21, t22)	{
 		return   t00 * (t11 * t22 - t12 * t21)
@@ -324,15 +324,15 @@ function Matrix4f() {
 		return f;
 	}
 	
-	this.invert = function invert(matrix) {
+	this.invert = function(matrix) {
 		return this.invert(matrix, null);
 	}
 	
-	this.invert = function invert() {
+	this.invert = function() {
 		return this.invert(this, null);
 	}
 	
-	this.quals = function equals(m) {
+	this.quals = function(m) {
 		if (this.m[0][0] == m.getM()[0][0] && this.m[0][1] == m.getM()[0][1] &&
 			this.m[0][2] == m.getM()[0][2] && this.m[0][3] == m.getM()[0][3] &&
 			this.m[1][0] == m.getM()[1][0] && this.m[1][1] == m.getM()[1][1] &&
@@ -346,15 +346,15 @@ function Matrix4f() {
 			return false;	
 	}
 	
-	this.set = function set(x, y, value) {
+	this.set = function(x, y, value) {
 		this.m[x][y] = value;
 	}
 	
-	this.get = function get(x, y) {
+	this.get = function(x, y) {
 		return  this.m[x][y];
 	}
 
-	this.getM = function getM() {
+	this.getM = function() {
 		return this.m;
 	}
 	
@@ -365,7 +365,7 @@ function Matrix4f() {
 	 * @param buf A float buffer to read from
 	 * @return this
 	 */
-	this.loadBuffer = function loadBuffer(buf) {
+	this.loadBuffer = function(buf) {
 
 		this.m[0][0] = buf.get();
 		this.m[0][1] = buf.get();
@@ -387,7 +387,7 @@ function Matrix4f() {
 		return this;
 	}
 	
-	this.load = function load(matrix) {
+	this.load = function(matrix) {
 		this.m = matrix;
 	}
 	
@@ -396,7 +396,7 @@ function Matrix4f() {
 	 * major (openGL) order.
 	 * @param buf The buffer to store this matrix in
 	 */
-	this.store = function store(buf) {
+	this.store = function(buf) {
 		buf.push(this.m[0][0]);
 		buf.push(this.m[0][1]);
 		buf.push(this.m[0][2]);
@@ -420,7 +420,7 @@ function Matrix4f() {
 	/**
 	 * Verticle visualization
 	 */
-	this.toString = function toString() {
+	this.toString = function() {
 		
 		return 	"|" + this.m[0][0] + " " + this.m[1][0] + " " + this.m[2][0] + " " + this.m[3][0] + "|\n" +
 				"|" + this.m[0][1] + " " + this.m[1][1] + " " + this.m[2][1] + " " + this.m[3][1] + "|\n" +

@@ -5,24 +5,24 @@
  */
 function Material(name) {
 	// initialization
-	this.name = name;
+	var name = name;
 	// map
-	this.diffuseMap = null;
-	this.normalMap = null;
-	this.displaceMap = null;
-	this.ambientMap = null;
-	this.specularMap = null;
-	this.alphaMap = null;
+	var diffuseMap = null;
+	var normalMap = null;
+	var displaceMap = null;
+	var ambientMap = null;
+	var specularMap = null;
+	var alphaMap = null;
 	// params
-	this.diffuseColor = null;
-	this.shininess = 1;
-	this.reflectivity = 0;
-	this.reflecriveFactor = 0;
-	this.refractiveFactor = 0;
-	this.refractiveIndex = 0;
-	this.emission = 0;
+	var diffuseColor = null;
+	var shininess = 1;
+	var reflectivity = 0;
+	var reflecriveFactor = 0;
+	var refractiveFactor = 0;
+	var refractiveIndex = 0;
+	var emission = 0;
 	
-	this.useFakeLighting = false;
+	var useFakeLighting = false;
 }
 
 export {Material};

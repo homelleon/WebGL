@@ -2,58 +2,60 @@ import {gl} from "./../../index.js";
 
 function ShaderProgram() {
 	// initialization	
-	this.programID = gl.createProgram();
-	this.uniforms = [];
+	var programID = gl.createProgram();
+	var vertexShaderID = null;
+	var fragmentShaderID = null;
+	var uniforms = [];
 
 	
-	if(!this.programID) {
+	if(!programID) {
 		console.log("Shader creation failed!");
 		return null;
 	}
 	
 	// methods
-	this.start = function start() {
-		gl.useProgram(this.programID);
+	this.start = function() {
+		gl.useProgram(programID);
 	}
 	
-	this.stop = function stop() {
+	this.stop = function() {
 		gl.useProgram(null);
 	}
 	
-	this.clean = function clean() {
+	this.clean = function() {
 		this.stop();
-		if(this.vertexShaderID) {
-			gl.detachShader(this.programID, this.vertexShaderID)
+		if(vertexShaderID) {
+			gl.detachShader(programID, vertexShaderID)
 		}
 		
 		if(this.fragmentShaderID) {
-			gl.detachShader(this.programID, this.fragmentShaderID)
+			gl.detachShader(programID, fragmentShaderID)
 		}
-		gl.deleteShader(this.fragmentShaderID);
-		gl.deleteShader(this.vertexShaderID);
-		gl.deleteProgram(this.programID);
+		gl.deleteShader(fragmentShaderID);
+		gl.deleteShader(vertexShaderID);
+		gl.deleteProgram(programID);
 	}
 	
-	this.loadUniformLocations = function loadUniformLocations() {}
+	this.loadUniformLocations = function() {}
 	
 	this.compileShaders = function compileShader() {
 		this.bindAttributes();
-		gl.linkProgram(this.programID);
+		gl.linkProgram(programID);
 		
-		if(!gl.getProgramParameter(this.programID, gl.LINK_STATUS)) {
-			console.log(gl.getProgramInfoLog(this.programID, 1024));
+		if(!gl.getProgramParameter(programID, gl.LINK_STATUS)) {
+			console.log(gl.getProgramInfoLog(programID, 1024));
 			return null;
 		}
-		gl.validateProgram(this.programID);
+		gl.validateProgram(programID);
 		
-		if(!gl.getProgramParameter(this.programID, gl.VALIDATE_STATUS)) {
-			console.log(gl.getProgramInfoLog(this.programID, 1024));
+		if(!gl.getProgramParameter(programID, gl.VALIDATE_STATUS)) {
+			console.log(gl.getProgramInfoLog(programID, 1024));
 			return null;
 		}
 		this.loadUniformLocations();
 	}
 	
-	this.loadShader = function loadShader(source, type) {
+	var loadShader = function(source, type) {
 		var shaderID = gl.createShader(type);
 		gl.shaderSource(shaderID, source);
 		gl.compileShader(shaderID);
@@ -62,73 +64,73 @@ function ShaderProgram() {
 			console.log("Couldn't compile shader!");
 			return null;
 		}
-		gl.attachShader(this.programID, shaderID);
+		gl.attachShader(programID, shaderID);
 		return shaderID;
 	}
 	
-	this.addVertexShader = function addVertexShader(text) {
-		this.vertexShaderID = this.loadShader(text, gl.VERTEX_SHADER);
+	this.addVertexShader = function(text) {
+		vertexShaderID = loadShader(text, gl.VERTEX_SHADER);
 	}
 	
-	this.addFragmentShader = function addFragmentShader(text) {
-		this.fragmentShaderID = this.loadShader(text, gl.FRAGMENT_SHADER);
+	this.addFragmentShader = function(text) {
+		fragmentShaderID = loadShader(text, gl.FRAGMENT_SHADER);
 	}
 	
-	this.addUniform = function addUniform(name) {
-		var uniformLocation = this.getUniformLocation(name);
+	this.addUniform = function(name) {
+		var uniformLocation = getUniformLocation(name);
 		
 		if(uniformLocation == "0xFFFFFFFF") {
 			console.log("Couldn't find uniform: " + name);
 			return;
 		}
 		
-		this.uniforms[name] = uniformLocation;
+		uniforms[name] = uniformLocation;
 	}
 	
-	this.getUniformLocation = function getUniformLocation(name) {
-		return gl.getUniformLocation(this.programID, name);
+	var getUniformLocation = function(name) {
+		return gl.getUniformLocation(programID, name);
 	}
 	
-	this.loadInt = function loadInt(name, value) {
-		var uniformLocation = this.uniforms[name];
+	this.loadInt = function(name, value) {
+		var uniformLocation = uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
-	this.loadFloat = function loadFloat(name, value) {
-		var uniformLocation = this.uniforms[name];
+	this.loadFloat = function(name, value) {
+		var uniformLocation = uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
-	this.load4DVector = function load4DVector(name, vector) {
-		var uniformLocation = this.uniforms[name];
+	this.load4DVector = function(name, vector) {
+		var uniformLocation = uniforms[name];
 		gl.uniform4f(uniformLocation, vector.x, vector.y, vector.z, vector.w);
 	}
 	
-	this.load3DVector = function load3DVector(name, vector) {
-		var uniformLocation = this.uniforms[name];
+	this.load3DVector = function(name, vector) {
+		var uniformLocation = uniforms[name];
 		gl.uniform3f(uniformLocation, vector.x, vector.y, vector.z);
 	}
 	
-	this.load2DVector = function load2DVector(name, vector) {
-		var uniformLocation = this.uniforms[name];
+	this.load2DVector = function(name, vector) {
+		var uniformLocation = uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
 	}
 	
-	this.loadMatrix = function loadMatrix(name, matrix) {
-		var uniformLocation = this.uniforms[name];
+	this.loadMatrix = function(name, matrix) {
+		var uniformLocation = uniforms[name];
 		var matrixBuffer = [];
 		matrix.store(matrixBuffer);
 		gl.uniformMatrix4fv(uniformLocation, false, matrixBuffer);
 	}
 	
-	this.bindAttributes = function bindAttributes() {}
+	this.bindAttributes = function() {}
 	
-	this.bindAttribute = function bindAttribute(attribute, name) {
-		gl.bindAttribLocation(this.programID, attribute, name);
+	this.bindAttribute = function(attribute, name) {
+		gl.bindAttribLocation(programID, attribute, name);
 	}
 	
-	this.bindFragOutput = function bindFragOutput(attribute, name) {
-		gl.bindFragDataLocation(this.programID, attribute, name);
+	this.bindFragOutput = function(attribute, name) {
+		gl.bindFragDataLocation(programID, attribute, name);
 	}
 }
 

@@ -1,9 +1,9 @@
 function Terrain(name, terrainMesh, terrainMaterial, position) {
-	this.name = name;
-	this.mesh = terrainMesh;
-	this.material = terrainMaterial;
-	this.x = position.x;
-	this.z = position.y;
+	var name = name;
+	var mesh = terrainMesh;
+	var material = terrainMaterial;
+	var x = position.x;
+	var z = position.y;
 }
 
 export {Terrain};

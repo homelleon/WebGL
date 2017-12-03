@@ -23,13 +23,13 @@ function EntityRenderer(projectionMatrix) {
 	/**
 	 * Renders entity objects.
 	 */
-	this.render = function render(scene) {
+	this.render = function(scene) {
 		shader.start();
-		var vao = scene.entities.get(0).models[0].mesh.vao;
+		var vao = scene.getEntities().get(0).getModels()[0].getMesh().getVAO();
 		vao.bindAttrib([ 0, 1, 2 ]);
-		shader.loadViewMatrix(scene.camera.getViewMatrix());
+		shader.loadViewMatrix(scene.getCamera().getViewMatrix());
 		shader.loadDiffuseColor(new Vector3f( 1, 0, 1 ));
-		gl.drawElements(gl.LINES, vao.indexBuffer.size, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.LINES, vao.getIndexBuffer().getSize(), gl.UNSIGNED_SHORT, 0);
 		vao.unbindAttrib([ 0, 1, 2 ]);
 		shader.stop();
 	}
@@ -37,7 +37,7 @@ function EntityRenderer(projectionMatrix) {
 	/**
 	 * Finalize and clear current rendering tools.
 	 */
-	this.clean = function clean() {
+	this.clean = function() {
 		shader.stop();
 		shader.clean();
 	}

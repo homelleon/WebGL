@@ -5,11 +5,11 @@ import {gl} from './../../index';
 function Maths() {
 	const PI = 3.14;
 	
-	this.toRadians = function (angle) {
+	this.toRadians = function(angle) {
 		return (angle / 180) * PI;
 	}
 	
-	this.createProjectionMatrix = function createProjectionMatrix(nearPlane, farPlane, FOV) {
+	this.createProjectionMatrix = function(nearPlane, farPlane, FOV) {
 		var projectionMatrix = new Matrix4f();
 		var aspectRatio = gl.viewportWidth / gl.viewportHeight;
 		var yScale = 1 / Math.tan(Math.toRadians(FOV / 2));
@@ -29,14 +29,14 @@ function Maths() {
 		
 	}
 	
-	this.createViewMatrix = function createViewMatrix(camera) {
+	this.createViewMatrix = function(camera) {
 		var viewMatrix = new Matrix4f();
 		viewMatrix.setIdentity();
-		viewMatrix.rotate(Math.toRadians(camera.pitch), new Vector3f(1, 0, 0));
-		viewMatrix.rotate(Math.toRadians(camera.yaw), new Vector3f(0, 1, 0));
-		viewMatrix.rotate(Math.toRadians(camera.roll), new Vector3f(0, 0, 1));
+		viewMatrix.rotate(Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0));
+		viewMatrix.rotate(Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0));
+		viewMatrix.rotate(Math.toRadians(camera.getRoll()), new Vector3f(0, 0, 1));
 		var negativeCameraPosition = new Vector3f(
-				-camera.position.x, -camera.position.y, -camera.position.z);
+				-camera.getPosition().x, -camera.getPosition().y, -camera.getPosition().z);
 		viewMatrix.translate3f(negativeCameraPosition);
 		
 		return viewMatrix;

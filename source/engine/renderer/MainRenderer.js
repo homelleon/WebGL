@@ -8,6 +8,7 @@ function MainRenderer() {
 	const FOV = 120;
 	const nearPlane = 0.1;
 	const farPlane = 10000;
+	
 	// initialization
 	var projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
 	
@@ -18,7 +19,7 @@ function MainRenderer() {
 	 * Renders scene objects.
 	 * @param scene - engine scene
 	 */
-	this.render = function render(scene) {
+	this.render = function(scene) {
 		gl.clearColor(1.0, 0.0, 0.0, 0.5);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
@@ -28,7 +29,7 @@ function MainRenderer() {
 	/**
 	 * Clears rendering engine.
 	 */
-	this.clean = function clean() {
+	this.clean = function() {
 		entityRenderer.clean();
 	}
 	

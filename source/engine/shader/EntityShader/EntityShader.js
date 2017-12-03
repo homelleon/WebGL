@@ -21,14 +21,14 @@ function EntityShader() {
 	
 	// methods
 	// @override
-	this.bindAttributes = function findAttributes() {
+	this.bindAttributes = function() {
 		this.bindAttribute(0, ATTRIBUTE_POSITION);
 		this.bindAttribute(1, ATTRIBUTE_TEXTURE_COORDS);
 		this.bindAttribute(2, ATTRIBUTE_NORMAL);
 	}
 	
 	// @override
-	this.loadUniformLocations = function loadUniformLocations() {
+	this.loadUniformLocations = function() {
 		// matrices
 		this.addUniform(UNIFORM_RPOJECTION_MATRIX);
 		this.addUniform(UNIFORM_VIEW_MATRIX);
@@ -37,19 +37,19 @@ function EntityShader() {
 		this.addUniform(UNIFORM_DIFFUSE_COLOR);
 	}
 	
-	this.loadProjectionMatrix = function loadProjectionMatrix(matrix) {
+	this.loadProjectionMatrix = function(matrix) {
 		this.loadMatrix(UNIFORM_RPOJECTION_MATRIX, matrix);
 	}
 	
-	this.loadViewMatrix = function loadViewMatrix(matrix) {
+	this.loadViewMatrix = function(matrix) {
 		this.loadMatrix(UNIFORM_VIEW_MATRIX, matrix);
 	}
 	
-	this.loadModelMatrix = function loadModelMatrix(matrix) {
+	this.loadModelMatrix = function(matrix) {
 		this.loadMatrix(UNIFORM_MODEL_MATRIX, matrix);
 	}
 	
-	this.loadDiffuseColor = function loadDiffuseColor(color) {
+	this.loadDiffuseColor = function(color) {
 		this.load3DVector(UNIFORM_DIFFUSE_COLOR, color);
 	}
 	

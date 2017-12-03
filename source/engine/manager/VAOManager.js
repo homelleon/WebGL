@@ -6,7 +6,7 @@ function VAOManager() {
 	var vbos = [];
 	
 	// methods
-	this.createVAO = function createVAO(indices, vertices, textures, normals) {
+	this.createVAO = function(indices, vertices, textures, normals) {
 		var vao = new VAO();
 		vao.bind();
 		vao.createIndexBuffer(indices);
@@ -23,7 +23,7 @@ function VAOManager() {
 	} 
 	
 	
-	this.clean = function clean() {
+	this.clean = function() {
 		if(vaos.length) {
 			vaos = [];
 		}
