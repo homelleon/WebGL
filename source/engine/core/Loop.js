@@ -4,22 +4,23 @@ import {VAOManager} from './../manager/VAOManager';
 
 var buffers = null;
 
+
 /**
  * Engine loop.
  * 
  */
 function Loop() {
 	// initialization	
-	var renderer = new MainRenderer();
+	var __renderer = new MainRenderer();
 	buffers = new VAOManager();
-	var scene = new Scene();
+	var __scene = new Scene();
 	// methods
 	this.update = function() {
-		renderer.render(scene);
+		__renderer.render(__scene);
 	}
 	
 	this.stop = function() {
-		renderer.clean();
+		__renderer.clean();
 		buffers.clean();
 	}
 }

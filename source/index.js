@@ -17,7 +17,9 @@ window.onload = (function() {
 	catch(e) {}
 	
 	if(!gl) {
-		console.log("WebGL is not supported by your browser");
+		var err = "WebGL is not supported by your browser";
+		console.log(err);
+		canvas.innerHTML = err;
 	}
 	
 	if(gl) {

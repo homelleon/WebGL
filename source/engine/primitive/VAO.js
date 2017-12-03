@@ -8,16 +8,16 @@ import {VBO} from './../primitive/VBO';
  */
 function VAO() {
 	// initialization
-	var object = gl.createVertexArray();	
-	var vbos = [];
-	var indexBuffer = null;
+	var __object = gl.createVertexArray();	
+	var __vbos = [];
+	var __indexBuffer = null;
     	      
 	// methods
 	/**
 	 * Binds current vertex array object for webgl context. 
 	 */
 	this.bind = function() {
-		gl.bindVertexArray(object);
+		gl.bindVertexArray(__object);
 	}
 	
 	/**
@@ -69,7 +69,7 @@ function VAO() {
 		gl.vertexAttribPointer(
 				attribute, dimentions, gl.FLOAT, false, 4 * dimentions, 0);
 		vbo.unbind();
-		vbos.push(vbo);
+		__vbos.push(vbo);
 	}
 	
 	/**
@@ -80,7 +80,7 @@ function VAO() {
 		var indexVBO = new VBO(gl.ELEMENT_ARRAY_BUFFER);
 		indexVBO.bind();
 		indexVBO.storeIndexData(values);
-		indexBuffer = indexVBO; 
+		__indexBuffer = indexVBO; 
 	}
 	
 	/**
@@ -91,19 +91,19 @@ function VAO() {
 		for(let vbo in vbos) {
 			gl.deleteBuffer(vbo.object);
 		}
-		gl.deleteVertexArray(object);
+		gl.deleteVertexArray(__object);
 	}
 	
 	this.getObject = function() {
-		return object;
+		return __object;
 	}
 	
 	this.getVbos = function() {
-		return vbos;
+		return __vbos;
 	}
 	
 	this.getIndexBuffer = function() {
-		return indexBuffer;
+		return __indexBuffer;
 	}
 }
 

@@ -2,8 +2,8 @@ import {VAO} from './../primitive/VAO';
 
 function VAOManager() {
 	// initialization
-	var vaos = [];
-	var vbos = [];
+	var __vaos = [];
+	var __vbos = [];
 	
 	// methods
 	this.createVAO = function(indices, vertices, textures, normals) {
@@ -18,7 +18,7 @@ function VAOManager() {
 			vao.createAttribute(2, 3, normals);
 		}
 		vao.unbind();
-		vaos.push(vao);
+		__vaos.push(vao);
 		return vao;
 	} 
 	

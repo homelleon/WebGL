@@ -13,8 +13,8 @@ import {buffers} from './../core/Loop';
  * 
  */
 function Scene() {
-	var camera = new Camera("MyCamera");	
-	var entities = new ObjectManager();
+	var __camera = new Camera("MyCamera");	
+	var __entities = new ObjectManager();
 	
 	// entity creation	
 	var vertices = [
@@ -72,15 +72,15 @@ function Scene() {
 	var model = new Model("entityModel", mesh, material);	
 	var entity = new Entity("entity", model, new Vector3f(0, 0, 0));
 	
-	entities.add(entity);
+	__entities.add(entity);
 	
 	// methods
 	this.getCamera = function() {
-		return camera;
+		return __camera;
 	}
 	
 	this.getEntities = function() {
-		return entities;
+		return __entities;
 	}
 }
 

@@ -7,16 +7,16 @@
  * @param material - material for current model
  */
 function Model(name, mesh, material) {
-	var name = name;
-	var mesh = mesh;
-	var material = material;
+	var __name = name;
+	var __mesh = mesh;
+	var __material = material;
 	
 	this.getMesh = function() {
-		return mesh;
+		return __mesh;
 	}
 	
 	this.getMaterial = function() {
-		return material;
+		return __material;
 	}
 }
 

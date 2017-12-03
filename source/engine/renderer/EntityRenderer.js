@@ -11,35 +11,35 @@ import {Camera} from './../object/camera/Camera';
  */
 function EntityRenderer(projectionMatrix) {	
 	// initialization
-	var shader = new EntityShader();
-	var projectionMatrix = projectionMatrix;
+	var __shader = new EntityShader();
+	var __projectionMatrix = projectionMatrix;
 	
 	// initialize some shader uniforms
-	shader.start();
-	shader.loadProjectionMatrix(projectionMatrix);
-	shader.stop();
+	__shader.start();
+	__shader.loadProjectionMatrix(projectionMatrix);
+	__shader.stop();
 	
 	// methods
 	/**
 	 * Renders entity objects.
 	 */
 	this.render = function(scene) {
-		shader.start();
+		__shader.start();
 		var vao = scene.getEntities().get(0).getModels()[0].getMesh().getVAO();
 		vao.bindAttrib([ 0, 1, 2 ]);
-		shader.loadViewMatrix(scene.getCamera().getViewMatrix());
-		shader.loadDiffuseColor(new Vector3f( 1, 0, 1 ));
+		__shader.loadViewMatrix(scene.getCamera().getViewMatrix());
+		__shader.loadDiffuseColor(new Vector3f( 1, 0, 1 ));
 		gl.drawElements(gl.LINES, vao.getIndexBuffer().getSize(), gl.UNSIGNED_SHORT, 0);
 		vao.unbindAttrib([ 0, 1, 2 ]);
-		shader.stop();
+		__shader.stop();
 	}
 	
 	/**
 	 * Finalize and clear current rendering tools.
 	 */
 	this.clean = function() {
-		shader.stop();
-		shader.clean();
+		__shader.stop();
+		__shader.clean();
 	}
 }
 

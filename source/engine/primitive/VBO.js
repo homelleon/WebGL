@@ -7,10 +7,10 @@ import {gl} from  "./../../index.js";
  */
 function VBO(type) {
 	// initialization
-	var object = gl.createBuffer();
-	var type = type;
-	var size = 0;
-	var dimentions = 0;
+	var __object = gl.createBuffer();
+	var __type = type;
+	var __size = 0;
+	var __dimentions = 0;
 	
 	// methods
 	/**
@@ -18,7 +18,7 @@ function VBO(type) {
 	 * webgl context.
 	 */
 	this.bind = function() {
-		gl.bindBuffer(type, object);
+		gl.bindBuffer(__type, __object);
 	}
 	
 	/**
@@ -26,7 +26,7 @@ function VBO(type) {
 	 * webgl context. 
 	 */
 	this.unbind = function() {
-		gl.bindBuffer(type, null);
+		gl.bindBuffer(__type, null);
 	}
 	
 	/**
@@ -35,8 +35,8 @@ function VBO(type) {
 	this.storeData = function(values, dimentions) {
 		gl.bufferData(type, new Float32Array(values),
 				gl.STATIC_DRAW);
-		size = values.length / dimentions;
-		dimentions = dimentions;
+		__size = values.length / dimentions;
+		__dimentions = dimentions;
 	}
 	
 	/**
@@ -45,26 +45,26 @@ function VBO(type) {
 	this.storeIndexData = function(values) {
 		gl.bufferData(type, new Uint16Array(values),
 				gl.STATIC_DRAW);
-		size = values.length;
+		__size = values.length;
 	}
 	
 	/**
 	 * Releases current vertex array object.
 	 */
 	this.clean = function() {
-		gl.deleteBuffer(object);
+		gl.deleteBuffer(__object);
 	}
 	
 	this.getObject = function() {
-		return object;
+		return __object;
 	}
 	
 	this.getSize = function() {
-		return size;
+		return __size;
 	}
 	
 	this.getDimentions = function() {
-		return dimentions;
+		return __dimentions;
 	}
 	
 }
