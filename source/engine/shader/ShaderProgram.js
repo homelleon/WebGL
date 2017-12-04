@@ -2,14 +2,14 @@ import {gl} from "./../../index.js";
 
 function ShaderProgram() {
 	// initialization	
-	var programObject = gl.createProgram();
-	var vertexShaderObject = null;
-	var fragmentShaderObject = null;
-	var uniforms = [];
+	var _programObject = gl.createProgram();
+	var _vertexShaderObject = null;
+	var _fragmentShaderObject = null;
+	var _uniforms = [];
 	
 	// test initialization
 	try {
-		if(!programObject) {
+		if(!_programObject) {
 			throw "Shader object was not initialized!";
 		}
 	} catch(err) {
@@ -19,7 +19,7 @@ function ShaderProgram() {
 	
 	// methods
 	this.start = function() {
-		gl.useProgram(programObject);
+		gl.useProgram(_programObject);
 	}
 	
 	this.stop = function() {
@@ -28,32 +28,32 @@ function ShaderProgram() {
 	
 	this.clean = function() {
 		this.stop();
-		if(vertexShaderObject) {
-			gl.detachShader(programObject, vertexShaderObject)
+		if(_vertexShaderObject) {
+			gl.detachShader(_programObject, _vertexShaderObject)
 		}
 		
-		if(this.fragmentShaderObject) {
-			gl.detachShader(programObject, fragmentShaderObject)
+		if(_fragmentShaderObject) {
+			gl.detachShader(_programObject, _fragmentShaderObject)
 		}
-		gl.deleteShader(fragmentShaderObject);
-		gl.deleteShader(vertexShaderObject);
-		gl.deleteProgram(programObject);
+		gl.deleteShader(_fragmentShaderObject);
+		gl.deleteShader(_vertexShaderObject);
+		gl.deleteProgram(_programObject);
 	}
 	
 	this.loadUniformLocations = function() {}
 	
 	this.compileShaders = function compileShader() {
 		this.bindAttributes();
-		gl.linkProgram(programObject);
+		gl.linkProgram(_programObject);
 		
-		if(!gl.getProgramParameter(programObject, gl.LINK_STATUS)) {
-			console.log(gl.getProgramInfoLog(programObject, 1024));
+		if(!gl.getProgramParameter(_programObject, gl.LINK_STATUS)) {
+			console.log(gl.getProgramInfoLog(_programObject, 1024));
 			return null;
 		}
-		gl.validateProgram(programObject);
+		gl.validateProgram(_programObject);
 		
-		if(!gl.getProgramParameter(programObject, gl.VALIDATE_STATUS)) {
-			console.log(gl.getProgramInfoLog(programObject, 1024));
+		if(!gl.getProgramParameter(_programObject, gl.VALIDATE_STATUS)) {
+			console.log(gl.getProgramInfoLog(_programObject, 1024));
 			return null;
 		}
 		this.loadUniformLocations();
@@ -68,16 +68,16 @@ function ShaderProgram() {
 			console.log("Couldn't compile shader!");
 			return null;
 		}
-		gl.attachShader(programObject, shaderID);
+		gl.attachShader(_programObject, shaderID);
 		return shaderID;
 	}
 	
 	this.addVertexShader = function(text) {
-		vertexShaderObject = loadShader(text, gl.VERTEX_SHADER);
+		_vertexShaderObject = loadShader(text, gl.VERTEX_SHADER);
 	}
 	
 	this.addFragmentShader = function(text) {
-		fragmentShaderObject = loadShader(text, gl.FRAGMENT_SHADER);
+		_fragmentShaderObject = loadShader(text, gl.FRAGMENT_SHADER);
 	}
 	
 	this.addUniform = function(name) {
@@ -88,40 +88,40 @@ function ShaderProgram() {
 			return;
 		}
 		
-		uniforms[name] = uniformLocation;
+		_uniforms[name] = uniformLocation;
 	}
 	
 	var getUniformLocation = function(name) {
-		return gl.getUniformLocation(programObject, name);
+		return gl.getUniformLocation(_programObject, name);
 	}
 	
 	this.loadInt = function(name, value) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
 	this.loadFloat = function(name, value) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		gl.uniform1f(uniformLocation, value);
 	}
 	
 	this.load4DVector = function(name, vector) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		gl.uniform4f(uniformLocation, vector.x, vector.y, vector.z, vector.w);
 	}
 	
 	this.load3DVector = function(name, vector) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		gl.uniform3f(uniformLocation, vector.x, vector.y, vector.z);
 	}
 	
 	this.load2DVector = function(name, vector) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		gl.uniform2f(uniformLocation, vector.x, vector.y);
 	}
 	
 	this.loadMatrix = function(name, matrix) {
-		var uniformLocation = uniforms[name];
+		var uniformLocation = _uniforms[name];
 		var matrixBuffer = [];
 		matrix.store(matrixBuffer);
 		gl.uniformMatrix4fv(uniformLocation, false, matrixBuffer);
@@ -130,11 +130,11 @@ function ShaderProgram() {
 	this.bindAttributes = function() {}
 	
 	this.bindAttribute = function(attribute, name) {
-		gl.bindAttribLocation(programObject, attribute, name);
+		gl.bindAttribLocation(_programObject, attribute, name);
 	}
 	
 	this.bindFragOutput = function(attribute, name) {
-		gl.bindFragDataLocation(programObject, attribute, name);
+		gl.bindFragDataLocation(_programObject, attribute, name);
 	}
 }
 

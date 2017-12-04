@@ -1,7 +1,7 @@
 function OBJLoader() {
-	var vertices = [];
-	var normals = [];
-	var texCoords = [];
+	var _vertices = [];
+	var _normals = [];
+	var _texCoords = [];
 	
 	var objects = [];
 	
@@ -18,16 +18,16 @@ function OBJLoader() {
 			}
 			
 			if(tokens[0] == "v") {
-				vertices.push(new Vertex(new Vector3f(
+				_vertices.push(new Vertex(new Vector3f(
 						+tokens[1], +tokens[2], +tokens[3])));
 			}
 			
 			if(tokens[0] == "vn") {
-				normals.push(new Vector3f(+tokens[1]), +tokens[2], +tokens[3]);
+				_normals.push(new Vector3f(+tokens[1]), +tokens[2], +tokens[3]);
 			}
 			
 			if(tokens[0] == "vt") {
-				textCoords.push(new Vector2f(+tokens[1], +tokens[2]));
+				_textCoords.push(new Vector2f(+tokens[1], +tokens[2]));
 			}
 			
 			if(tokens[0] == "o") {
@@ -98,7 +98,7 @@ function OBJLoader() {
 			
 		}
 		
-		if( !normals.length ) {
+		if( !_normals.length ) {
 			for(let object in objects) {
 				for(let polygonGroup in object.polygonGroups) {
 					for(let key in polygonGroup.smoothingGroups.keySet()) {

@@ -11,16 +11,16 @@ var buffers = null;
  */
 function Loop() {
 	// initialization	
-	var __renderer = new MainRenderer();
+	var _renderer = new MainRenderer();
 	buffers = new VAOManager();
-	var __scene = new Scene();
+	var _scene = new Scene();
 	// methods
 	this.update = function() {
-		__renderer.render(__scene);
+		_renderer.render(_scene);
 	}
 	
 	this.stop = function() {
-		__renderer.clean();
+		_renderer.clean();
 		buffers.clean();
 	}
 }

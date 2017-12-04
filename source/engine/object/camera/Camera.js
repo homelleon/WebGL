@@ -2,46 +2,46 @@ import {Vector3f} from './../../math/vector/Vector3f';
 import {Matrix4f} from './../../math/matrix/Matrix4f';
 
 function Camera(name) {
-	var __name = name;
-	var __position = new Vector3f(0, 0, 0); 
-	var __pitch = 20;
-	var __yaw = 0;
-	var __roll = 0;
+	var _name = name;
+	var _position = new Vector3f(0, 0, 0); 
+	var _pitch = 20;
+	var _yaw = 0;
+	var _roll = 0;
 	
 	this.getViewMatrix = function() {		
 		return Math.createViewMatrix(this);
 	}
 	
 	this.increasePosition = function(x, y, z) {
-		__position.x += x;
-		__position.y += y;
-		__position.z += z;		
+		_position.x += x;
+		_position.y += y;
+		_position.z += z;		
 	}
 	
 	this.increaseRotation = function(x, y, z) {
-		__roll += x;
-		__yaw += y;
-		__pitch += z;
+		_roll += x;
+		_yaw += y;
+		_pitch += z;
 	}
 	
 	this.getName = function(name) {
-		return __name;
+		return _name;
 	}
 	
 	this.getPosition = function() {
-		return __position;
+		return _position;
 	}
 	
 	this.getPitch = function() {
-		return __pitch;
+		return _pitch;
 	}
 	
 	this.getYaw = function() {
-		return __yaw;
+		return _yaw;
 	}
 	
 	this.getRoll = function() {
-		return __roll;
+		return _roll;
 	}
 }
 

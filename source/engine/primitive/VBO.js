@@ -7,10 +7,10 @@ import {gl} from  "./../../index.js";
  */
 function VBO(type) {
 	// initialization
-	var __object = gl.createBuffer();
-	var __type = type;
-	var __size = 0;
-	var __dimentions = 0;
+	var _object = gl.createBuffer();
+	var _type = type;
+	var _size = 0;
+	var _dimentions = 0;
 	
 	// methods
 	/**
@@ -18,7 +18,7 @@ function VBO(type) {
 	 * webgl context.
 	 */
 	this.bind = function() {
-		gl.bindBuffer(__type, __object);
+		gl.bindBuffer(_type, _object);
 	}
 	
 	/**
@@ -26,7 +26,7 @@ function VBO(type) {
 	 * webgl context. 
 	 */
 	this.unbind = function() {
-		gl.bindBuffer(__type, null);
+		gl.bindBuffer(_type, null);
 	}
 	
 	/**
@@ -35,8 +35,8 @@ function VBO(type) {
 	this.storeData = function(values, dimentions) {
 		gl.bufferData(type, new Float32Array(values),
 				gl.STATIC_DRAW);
-		__size = values.length / dimentions;
-		__dimentions = dimentions;
+		_size = values.length / dimentions;
+		_dimentions = dimentions;
 	}
 	
 	/**
@@ -45,26 +45,26 @@ function VBO(type) {
 	this.storeIndexData = function(values) {
 		gl.bufferData(type, new Uint16Array(values),
 				gl.STATIC_DRAW);
-		__size = values.length;
+		_size = values.length;
 	}
 	
 	/**
 	 * Releases current vertex array object.
 	 */
 	this.clean = function() {
-		gl.deleteBuffer(__object);
+		gl.deleteBuffer(_object);
 	}
 	
 	this.getObject = function() {
-		return __object;
+		return _object;
 	}
 	
 	this.getSize = function() {
-		return __size;
+		return _size;
 	}
 	
 	this.getDimentions = function() {
-		return __dimentions;
+		return _dimentions;
 	}
 	
 }

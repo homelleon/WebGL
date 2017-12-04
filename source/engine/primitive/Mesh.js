@@ -5,15 +5,15 @@
  * @param vao - vertex array object
  */
 function Mesh(name, vao) {
-	var __name = name;
-	var __vao = vao;
+	var _name = name;
+	var _vao = vao;
 	
 	this.getName = function() {
-		return __name;
+		return _name;
 	}
 	
 	this.getVAO = function() {
-		return __vao;
+		return _vao;
 	}
 }
 

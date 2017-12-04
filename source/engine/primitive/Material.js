@@ -5,24 +5,24 @@
  */
 function Material(name) {
 	// initialization
-	var __name = name;
+	var _name = name;
 	// map
-	var __diffuseMap = null;
-	var __normalMap = null;
-	var __displaceMap = null;
-	var __ambientMap = null;
-	var __specularMap = null;
-	var __alphaMap = null;
+	var _diffuseMap = null;
+	var _normalMap = null;
+	var _displaceMap = null;
+	var _ambientMap = null;
+	var _specularMap = null;
+	var _alphaMap = null;
 	// params
-	var __diffuseColor = null;
-	var __shininess = 1;
-	var __reflectivity = 0;
-	var __reflecriveFactor = 0;
-	var __refractiveFactor = 0;
-	var __refractiveIndex = 0;
-	var __emission = 0;
+	var _diffuseColor = null;
+	var _shininess = 1;
+	var _reflectivity = 0;
+	var _reflecriveFactor = 0;
+	var _refractiveFactor = 0;
+	var _refractiveIndex = 0;
+	var _emission = 0;
 	
-	var __useFakeLighting = false;
+	var _useFakeLighting = false;
 }
 
 export {Material};

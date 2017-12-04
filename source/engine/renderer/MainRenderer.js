@@ -10,8 +10,8 @@ function MainRenderer() {
 	const farPlane = 10000;
 	
 	// initialization
-	var __projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
-	var __entityRenderer = new EntityRenderer(__projectionMatrix);
+	var _projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
+	var _entityRenderer = new EntityRenderer(_projectionMatrix);
 	
 	// methods
 	/**
@@ -22,14 +22,14 @@ function MainRenderer() {
 		gl.clearColor(1.0, 0.0, 0.0, 0.5);
 		gl.clear(gl.COLOR_BUFFER_BIT);
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
-		__entityRenderer.render(scene);
+		_entityRenderer.render(scene);
 	}
 	
 	/**
 	 * Clears rendering engine.
 	 */
 	this.clean = function() {
-		__entityRenderer.clean();
+		_entityRenderer.clean();
 	}
 	
 }

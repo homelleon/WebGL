@@ -3,14 +3,14 @@
  * 
  */
 function ObjectManager() {
-	var __elements = [];
+	var _elements = [];
 	
 	this.add = function(element) {
-		__elements.push(element);
+		_elements.push(element);
 	}
 	
 	this.get = function(index) {
-		return __elements[index];
+		return _elements[index];
 	}
 }
 

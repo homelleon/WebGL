@@ -27,10 +27,7 @@ module.exports = function(env) {
 		]);
 	}
 	if(env === 'test') {
-		return merge([
-			test(PATHS),
-			babel()
-		])
+		return test(PATHS);
 	}
 	if(env === 'development') {
 		return merge([
@@ -41,6 +38,6 @@ module.exports = function(env) {
 			images(),
 			shaders(),
 			devserver()
-		])
+		]);
 	}
 };

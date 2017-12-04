@@ -9,66 +9,66 @@ import {Vector3f} from './../../math/vector/Vector3f';
  */
 function Entity(name, model, position) {
 	// initialization
-	var __name = name;
-	var __position = position;
-	var __rotation = new Vector3f( 0, 0, 0 );
-	var __models = [];
-	var __scale = 1;
-	var __isVisible = false;
-	var __isMoved = false;
-	var __isChosen = false;
-	var __position = position || new Vector3f( 0, 0, 0 );
+	var _name = name;
+	var _position = position;
+	var _rotation = new Vector3f( 0, 0, 0 );
+	var _models = [];
+	var _scale = 1;
+	var _isVisible = false;
+	var _isMoved = false;
+	var _isChosen = false;
+	var _position = position || new Vector3f( 0, 0, 0 );
 	
-	__models.push(model);
+	_models.push(model);
 	
 	/**
 	 * Increases entity position due to arguments. 
 	 */
 	this.increasePosition = function(x, y, z) {
-		__position.x += x;
-		__position.y += y;
-		__position.z += z;
+		_position.x += x;
+		_position.y += y;
+		_position.z += z;
 	}
 	
 	/**
 	 * Increases entity rotation due to arguments.
 	 */
 	this.increaseRotation = function(x, y, z) {
-		__rotation.x += x;
-		__rotation.y += y;
-		__rotation.z += z;
+		_rotation.x += x;
+		_rotation.y += y;
+		_rotation.z += z;
 	}
 	
 	this.getName = function() {
-		return __name;
+		return _name;
 	}
 	
 	this.getPosition = function() {
-		return __position;
+		return _position;
 	}
 	
 	this.getRotation = function() {
-		return __rotation;
+		return _rotation;
 	}
 	
 	this.getModels = function() {
-		return __models;
+		return _models;
 	}
 	
 	this.getScale = function() {
-		return __scale;
+		return _scale;
 	}
 	
 	this.isVisible = function() {
-		return __isVisible;
+		return _isVisible;
 	}
 	
 	this.isMoved = function() {
-		return __isMoved;
+		return _isMoved;
 	}
 	
 	this.isChosen = function() {
-		return __isChosen;
+		return _isChosen;
 	}
 	
 }
