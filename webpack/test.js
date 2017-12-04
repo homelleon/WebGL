@@ -1,10 +1,10 @@
 module.exports = function(PATHS) {
 	return {
 		  entry: {
-			  test: PATHS.test + '/indexTest.js'
+			  test: PATHS.test + '/source/testIndex.js'
 		  },
 		  output: {
-			path: PATHS.build + '/test/',
+			path: PATHS.test + '/build/',
 		    filename: '[name].js'
 		  }
 		}

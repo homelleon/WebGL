@@ -13,9 +13,8 @@
   "author": "homelleon <ihomelleoni@yandex.ru>",
   "license": "ISC",
   "jest": {
-    "roots": [
-      "<rootDir>/build/test"
-    ]
+    "roots": ["<rootDir>/__test__/build"],
+    "testMatch" : ["*\\**\\test*.js"]
   },
   "dependencies": {
     "webpack": "^3.8.1"

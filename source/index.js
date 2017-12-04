@@ -6,6 +6,11 @@ var gl = null;
 
 window.onload = (function() {
 	var canvas = document.getElementById("gl");
+	if(!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "gl";
+		document.body.appendChild(canvas);
+	}
 	
 	// initialize webgl
 	try {

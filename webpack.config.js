@@ -11,7 +11,7 @@ const shaders = require('./webpack/shaders');
 
 const PATHS = {
 	source: path.join(__dirname, 'source'),
-	test: path.join(__dirname, 'test'),
+	test: path.join(__dirname, '__test__'),
 	build: path.join(__dirname, 'build')
 };
 
@@ -27,7 +27,10 @@ module.exports = function(env) {
 		]);
 	}
 	if(env === 'test') {
-		return test(PATHS);
+		return merge([
+			test(PATHS),
+			shaders()
+		]);
 	}
 	if(env === 'development') {
 		return merge([
