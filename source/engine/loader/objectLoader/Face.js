@@ -1,22 +1,22 @@
 function Face() {
 
-	var __indices = [];
-	var __material;
+	var _indices = [];
+	var _material;
 
 	this.getIndices = function() {
-		return __indices;
+		return _indices;
 	}
 
 	this.setIndices = function(indices) {
-		__indices = indices;
+		_indices = indices;
 	}
 
 	this.getMaterial = function() {
-		return __material;
+		return _material;
 	}
 
 	this.setMaterial = function(material) {
-		__material = material;
+		_material = material;
 	}
 }
 

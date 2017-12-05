@@ -93,7 +93,9 @@ window.onload = (function() {
 				canvas.getContext("moz-webgl") ||
 				canvas.getContext("webkit-3d");
 	}
-	catch(e) {}
+	catch(err) {
+		console.log(err);
+	}
 	
 	if(!gl) {
 		var err = "WebGL is not supported by your browser";
@@ -886,6 +888,8 @@ new __WEBPACK_IMPORTED_MODULE_0__engine_math_testMaths__["a" /* testMath */]();
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return testMath; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__ = __webpack_require__(3);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_engine_math_matrix_Matrix4f__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__source_index__ = __webpack_require__(0);
+
 
 
 
@@ -894,10 +898,16 @@ function testMath() {
 		// initialize test variables
 		const PI = 3.14;
 		var maths = new __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__["a" /* Maths */](); // object to test
+		jest.mock('./../../source/index');
+		
+		gl = {};
+		gl.viewportWidth = 800;
+		gl.viewportHeight = 600;
+		
 		describe('Maths \'toRadiants\' method test', () => {
 			// arguments to test
 			var angleArray = [
-				0, 10, 45, 90, 180, 270, 360, - 10
+				0, 10, 45, 90, 180, 270, 360, -10
 			];
 			
 			for(var i = 0; i < angleArray.length; i++) {
@@ -908,7 +918,8 @@ function testMath() {
 					expect(maths.toRadians(angle)).toBe(result);
 				})
 			}
-		})
+		});
+		
 		describe('Maths \'createProjectionMatrix\' method test', () => {
 			// arguments to test
 			var args = [
@@ -925,10 +936,6 @@ function testMath() {
 			var width = 800;
 			var height = 600;
 			var aspectRation = width / height;
-			
-			var gl = jest.fn();
-			gl.viewportWidth = width;
-			gl.viewportHeight = height;
 			
 			for(var i = 0; i < args.length; i++) {
 				// initialize suites variables
@@ -990,7 +997,7 @@ function MainRenderer() {
 	 * @param scene - engine scene
 	 */
 	this.render = function(scene) {
-		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clearColor(1.0, 0.0, 0.0, 0.5);
+		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clearColor(0.0, 1.0, 1.0, 0.5);
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clear(__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].COLOR_BUFFER_BIT);
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewport(0, 0, __WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewportWidth, __WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewportHeight);
 		_entityRenderer.render(scene);

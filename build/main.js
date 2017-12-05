@@ -81,11 +81,18 @@ var gl = null;
 
 window.onload = function () {
 	var canvas = document.getElementById("gl");
+	if (!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "gl";
+		document.body.appendChild(canvas);
+	}
 
 	// initialize webgl
 	try {
 		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl") || canvas.getContext("moz-webgl") || canvas.getContext("webkit-3d");
-	} catch (e) {}
+	} catch (err) {
+		console.log(err);
+	}
 
 	if (!gl) {
 		var err = "WebGL is not supported by your browser";
@@ -754,11 +761,11 @@ function VAO() {
  */
 function MainRenderer() {
 	const FOV = 120;
-	const nearPlane = 0.1;
-	const farPlane = 10000;
+	const NEAR_PLANE = 0.1;
+	const FAR_PLANE = 10000;
 
 	// initialization
-	var _projectionMatrix = Math.createProjectionMatrix(nearPlane, farPlane, FOV);
+	var _projectionMatrix = Math.createProjectionMatrix(NEAR_PLANE, FAR_PLANE, FOV);
 	var _entityRenderer = new __WEBPACK_IMPORTED_MODULE_1__EntityRenderer__["a" /* EntityRenderer */](_projectionMatrix);
 
 	// methods
@@ -767,7 +774,7 @@ function MainRenderer() {
   * @param scene - engine scene
   */
 	this.render = function (scene) {
-		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].clearColor(1.0, 0.0, 0.0, 0.5);
+		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].clearColor(0.0, 1.0, 1.0, 0.5);
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].clear(__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].COLOR_BUFFER_BIT);
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].viewport(0, 0, __WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].viewportWidth, __WEBPACK_IMPORTED_MODULE_0__index_js__["gl"].viewportHeight);
 		_entityRenderer.render(scene);
@@ -1533,13 +1540,28 @@ function initTools() {
 
 
 
+/**
+ * Utility maths calculataion class.
+ */
 function Maths() {
 	const PI = 3.14;
 
+	/**
+  * Shifts angle into radian. 
+  */
 	this.toRadians = function (angle) {
 		return angle / 180 * PI;
 	};
 
+	/**
+  * Creates perspective transformation (projection) matrix from arguments.
+  * 
+  * @param nearPlane - Vector4f-type object argument of nearest clipping plane
+  * @param farPlane - Vector4f-type object argument of farthest clipping plane
+  * @param FOV - Number-type argument of field of view
+  *  
+  * @return Matrix4f-type object of projection Matrix
+  */
 	this.createProjectionMatrix = function (nearPlane, farPlane, FOV) {
 		var projectionMatrix = new __WEBPACK_IMPORTED_MODULE_0__matrix_Matrix4f__["a" /* Matrix4f */]();
 		var aspectRatio = __WEBPACK_IMPORTED_MODULE_2__index__["gl"].viewportWidth / __WEBPACK_IMPORTED_MODULE_2__index__["gl"].viewportHeight;
@@ -1559,6 +1581,13 @@ function Maths() {
 		return projectionMatrix;
 	};
 
+	/**
+  * Creates camera view transformation (view) matrix from camera object.
+  * 
+  * @param camera - Camera-type object argument
+  * 
+  * @return Matrix4f-type object of view matrix
+  */
 	this.createViewMatrix = function (camera) {
 		var viewMatrix = new __WEBPACK_IMPORTED_MODULE_0__matrix_Matrix4f__["a" /* Matrix4f */]();
 		viewMatrix.setIdentity();

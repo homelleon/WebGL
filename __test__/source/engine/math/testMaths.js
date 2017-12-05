@@ -6,10 +6,12 @@ function testMath() {
 		// initialize test variables
 		const PI = 3.14;
 		var maths = new Maths(); // object to test
+		jest.mock('./../../source/engine/math/Maths');
+		
 		describe('Maths \'toRadiants\' method test', () => {
 			// arguments to test
 			var angleArray = [
-				0, 10, 45, 90, 180, 270, 360, - 10
+				0, 10, 45, 90, 180, 270, 360, -10
 			];
 			
 			for(var i = 0; i < angleArray.length; i++) {
@@ -20,7 +22,8 @@ function testMath() {
 					expect(maths.toRadians(angle)).toBe(result);
 				})
 			}
-		})
+		});
+		
 		describe('Maths \'createProjectionMatrix\' method test', () => {
 			// arguments to test
 			var args = [
@@ -37,10 +40,6 @@ function testMath() {
 			var width = 800;
 			var height = 600;
 			var aspectRation = width / height;
-			
-			var gl = jest.fn();
-			gl.viewportWidth = width;
-			gl.viewportHeight = height;
 			
 			for(var i = 0; i < args.length; i++) {
 				// initialize suites variables

@@ -1,16 +1,27 @@
+import {buffers} from './../../core/Loop';
+import {Vertex2f} from './../../math/vector/Vector2f';
+import {Vertex3f} from './../../math/vector/Vector3f';
+import {Vertex} from './Vertex';
+import {Polygon} from './Polygon';
+import {PolygonGroup} from './PolygonGroup';
+import {SmoothingGoup} from './SmoothingGroup';
+import {Face} from './Face';
+import {MeshObjec} from './MeshObject';
+
+
 function OBJLoader(generateTangents) {
 	// intializaiton;
-	var vertices = [];
-	var normals = [];
-	var texCoords = [];
+	var _vertices = [];
+	var _normals = [];
+	var _texCoords = [];
 
-	var objects = [];
-	var materials = new HashMap<String, Material>(); // TODO: refactor
-	var currentSmoothingGroup;
-	var materialName;
+	var _objects = [];
+	var _materials = new Map();
+	var _currentSmoothingGroup;
+	var _materialName;
 	
-	var generateNormals = true;
-	var genTangents = generateTangents || false;
+	var _generateNormals = true;
+	var _genTangents = generateTangents || false;
 	
 	this.load = function(path, objFile, mtlFile) {
 		time = new Data();
@@ -19,16 +30,13 @@ function OBJLoader(generateTangents) {
 			mtlReader = null;
 			
 			// load .mtl
-			if(mtlFile != null) {
-				try {
-						InputStreamReader inputStream = new InputStreamReader(Class.class.getResourceAsStream(path + "/" +  mtlFile));
-						mtlReader = new BufferedReader(inputStream);
-						
-						var line;						
+			if(!mtlFile) {
+				try {						
+						var lines = mtlFile.split["\n"];						
 						var currentMtl = "";
-						
-						while((line = mtlReader.readLine()) != null) {							
-							var tokens = line.split(" ");
+						  
+						for(var i = 0; i < lines.length; i++) {
+							var tokens = lines[i].split(" ");
 							tokens = Util.removeEmptyStrings(tokens);
 							
 							if(!tokens.length) {
@@ -36,14 +44,14 @@ function OBJLoader(generateTangents) {
 							}
 							
 							if(tokens[0] == "newmtl") {
-								Material material = new Material(tokens[1]);
-								materials.put(tokens[1], material);
+								var material = new Material(tokens[1]);
+								materials.set(tokens[1], material);
 								currentMtl = tokens[1];
 							}
 							
 							if(tokens[0] == "Kd") {
 								if(tokens.length > 1) {
-									Vector3f color = new Vector3f(Float.valueOf(tokens[1]), Float.valueOf(tokens[2]), Float.valueOf(tokens[3]));
+									var color = new Vector3f(+tokens[1], +tokens[2], +tokens[3]);
 									materials.get(currentMtl).setColor(color);
 								}
 							}
@@ -79,98 +87,98 @@ function OBJLoader(generateTangents) {
 						
 						mtlReader.close();
 					}
-				catch(Exception e) {
-					e.printStackTrace();
-					System.exit(1);
+				catch(error) {
+					console.log(error.stackTrace());
 				}
 			}
 				
 			// load .obj
 			try {
 				console.log(path + objFile + ".obj");
+								
+				var lines = meshReader.split("\n");
 				
-				InputStreamReader inputStream = new InputStreamReader(Class.class.getResourceAsStream(path + objFile + ".obj"));
-				meshReader = new BufferedReader(inputStream);
-				
-				var line;
-				
-				while((line = meshReader.readLine()) != null) {
-					var tokens = line.split(" ");
+				for(var i = 0; i < lines.length; i++) {
+					var tokens = lines[i].split(" ");
 					tokens = Util.removeEmptyStrings(tokens);
 					if(!tokens.length || tokens[0] == "#") {
 						continue;
 					}
 					
 					if(tokens[0] == "v") {
-						vertices.add(new Vertex(new Vector3f(Float.valueOf(tokens[1]),
-														  Float.valueOf(tokens[2]),
-														  Float.valueOf(tokens[3]))));
+						_vertices.push(
+							new Vertex(
+								new Vector3f(+tokens[1], +tokens[2], +tokens[3])
+							)
+						);
 					}
 					
 					if(tokens[0] == "vn") {
-						normals.add(new Vector3f(Float.valueOf(tokens[1]),
-											  Float.valueOf(tokens[2]),
-											  Float.valueOf(tokens[3])));
+						_normals.push(
+							new Vector3f(+tokens[1], +tokens[2], +tokens[3])
+						);
 					}
 					
 					if(tokens[0] ==  "vt") {
-						texCoords.add(new Vector2f(Float.valueOf(tokens[1]), Float.valueOf(tokens[2])));
+						_texCoords.push(
+							new Vector2f(+tokens[1], +tokens[2])
+						);
 					}
 					
 					if(tokens[0] == "o") {
-						MeshObject object = new MeshObject();
+						var object = new MeshObject();
 						object.setName(tokens[1]);
-						objects.add(new MeshObject());
+						objects.push(new MeshObject());
 					}
 					
 					if(tokens[0] == "g") {
-						PolygonGroup polygonGroup = new PolygonGroup();	
+						var polygonGroup = new PolygonGroup();	
 						if (tokens.length > 1)
 							polygonGroup.setName(tokens[1]);
-						if (objects.isEmpty()) objects.add(new MeshObject());
+						if (objects.isEmpty()) objects.push(new MeshObject());
 						objects.peekLast().getPolygonGroups().add(polygonGroup);
 					}
 					
 					if(tokens[0] == "usemtl") {
-						Polygon polygon = new Polygon();
+						var polygon = new Polygon();
 						materialname = tokens[1];
 						polygon.setMaterial(tokens[1]);
 						if(objects.peekLast().getPolygonGroups().isEmpty())
-							objects.peekLast().getPolygonGroups().add(new PolygonGroup());
-						objects.peekLast().getPolygonGroups().peekLast().getPolygons().add(polygon);
+							objects.peekLast().getPolygonGroups().push(new PolygonGroup());
+						objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(polygon);
 					}
 					
 					if(tokens[0] == "s") {
 						if(objects.peekLast().getPolygonGroups().isEmpty()) {
-							objects.peekLast().getPolygonGroups().add(new PolygonGroup());
+							objects.peekLast().getPolygonGroups().push(new PolygonGroup());
 						}
 						
 						if(tokens[1] == "off" || tokens[1] == "0") {
 							currentSmoothingGroup = 0;
 							
 							if(!objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().containsKey(0)) {
-								objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().put(currentSmoothingGroup, new SmoothingGroup());
+								objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(currentSmoothingGroup, new SmoothingGroup());
 							}
 						} else {
-							currentSmoothingGroup = Integer.valueOf(tokens[1]);
-							if(!objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().containsKey(currentSmoothingGroup)){
-								objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().put(currentSmoothingGroup, new SmoothingGroup());
+							currentSmoothingGroup = +tokens[1];
+							if(!objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().containsKey(currentSmoothingGroup)) {
+								objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(currentSmoothingGroup, new SmoothingGroup());
 							}
 						}
 					}
 					
 					if(tokens[0] == "f") {
 						if(objects.peekLast().getPolygonGroups().isEmpty()) {
-							objects.peekLast().getPolygonGroups().add(new PolygonGroup());
+							objects.peekLast().getPolygonGroups().push(new PolygonGroup());
 						}
 						
 						if(objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().isEmpty()) {
 							currentSmoothingGroup = 1;
-							objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().put(currentSmoothingGroup, new SmoothingGroup());
+							objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(currentSmoothingGroup, new SmoothingGroup());
 						}
 						
 						if(objects.peekLast().getPolygonGroups().peekLast().getPolygons().isEmpty()) {
-							objects.peekLast().getPolygonGroups().peekLast().getPolygons().add(new Polygon());
+							objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(new Polygon());
 						}
 						
 						if(tokens.length == 4) {
@@ -186,9 +194,9 @@ function OBJLoader(generateTangents) {
 				meshReader.close();
 					
 				if(normals.isEmpty() && generateNormals) {
-					for(MeshObject object : objects) {
-						for(PolygonGroup polygonGroup : object.getPolygonGroups()) {
-							for(Integer key : polygonGroup.getSmoothingGroups().keySet()) {
+					for(var object in objects) {
+						for(var polygonGroup in object.getPolygonGroups()) {
+							for(var key in polygonGroup.getSmoothingGroups().keySet()) {
 								if(frontface == Frontface.CW) {
 									Util.generateNormalsCW(polygonGroup.getSmoothingGroups().get(key));
 								}
@@ -202,13 +210,13 @@ function OBJLoader(generateTangents) {
 					
 				var meshes = [];
 				
-				for(MeshObject object : objects) {
-					for(PolygonGroup polygonGroup : object.getPolygonGroups()) {
-						for(Polygon polygon : polygonGroup.getPolygons()) {
+				for(var object in objects) {
+					for(var polygonGroup in object.getPolygonGroups()) {
+						for(var polygon in polygonGroup.getPolygons()) {
 							
 							generatePolygon(polygonGroup.getSmoothingGroups(), polygon);
-							Mesh mesh = convert(polygon);						
-							meshes.add(mesh);
+							var mesh = convert(polygon);						
+							meshes.push(mesh);
 						}
 					}
 				}
@@ -219,9 +227,8 @@ function OBJLoader(generateTangents) {
 				
 				return meshes;
 			}
-			catch(Exception e) {
-				e.printStackTrace();
-				System.exit(1);
+			catch(err) {
+				console.log( err.stackTrace() );
 			}
 		
 		return null;
@@ -231,22 +238,29 @@ function OBJLoader(generateTangents) {
 		// vertex//normal
 		if(tokens[1].contains("//")) {
 			
-			int[] vertexIndices = {Integer.parseInt(tokens[1].split("//")[0]) - 1,
-					      		   Integer.parseInt(tokens[2].split("//")[0]) - 1,
-					      		   Integer.parseInt(tokens[3].split("//")[0]) - 1};
-			int[] normalIndices = {Integer.parseInt(tokens[1].split("//")[1]) - 1,
-								   Integer.parseInt(tokens[2].split("//")[1]) - 1,
-								   Integer.parseInt(tokens[3].split("//")[1]) - 1};
+			var vertexIndices = [
+				+tokens[1].split("//")[0] - 1,
+				+tokens[2].split("//")[0] - 1,
+				+tokens[3].split("//")[0] - 1
+			];
 			
-			Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-			Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-			Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-			v0.setNormal(normals.get(normalIndices[0]));
-			v1.setNormal(normals.get(normalIndices[1]));
-			v2.setNormal(normals.get(normalIndices[2]));
+			var normalIndices = [
+				+tokens[1].split("//")[1] - 1,
+				+tokens[2].split("//")[1] - 1,
+				+tokens[3].split("//")[1] - 1
+			];
+			
+			var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+			var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+			var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+			v0.setNormal(normals[normalIndices[0]]);
+			v1.setNormal(normals[normalIndices[1]]);
+			v2.setNormal(normals[normalIndices[2]]);
+			
 			if(genTangents) {
 				generateTangents(v0, v1, v2);
 			}
+			
 			addToSmoothingGroup(objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(currentSmoothingGroup),v0,v1,v2);
 		}
 		
@@ -255,50 +269,67 @@ function OBJLoader(generateTangents) {
 			// vertex/textureCoord/normal
 			if(tokens[1].split("/").length == 3) {
 
-				int[] vertexIndices = {Integer.parseInt(tokens[1].split("/")[0]) - 1,
-						      		   Integer.parseInt(tokens[2].split("/")[0]) - 1,
-						      		   Integer.parseInt(tokens[3].split("/")[0]) - 1};
-				int[] texCoordIndices =  {Integer.parseInt(tokens[1].split("/")[1]) - 1,
-						              	  Integer.parseInt(tokens[2].split("/")[1]) - 1,
-						              	  Integer.parseInt(tokens[3].split("/")[1]) - 1};
-				int[] normalIndices = {Integer.parseInt(tokens[1].split("/")[2]) - 1,
-									   Integer.parseInt(tokens[2].split("/")[2]) - 1,
-									   Integer.parseInt(tokens[3].split("/")[2]) - 1};
+				var vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1
+				];
 				
-				Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-				Vertex v1 =  new Vertex(vertices.get(vertexIndices[1]).getPos());
-				Vertex v2 =  new Vertex(vertices.get(vertexIndices[2]).getPos());
-				v0.setNormal(normals.get(normalIndices[0]));
-				v1.setNormal(normals.get(normalIndices[1]));
-				v2.setNormal(normals.get(normalIndices[2]));
-				v0.setTextureCoord(texCoords.get(texCoordIndices[0]));
-				v1.setTextureCoord(texCoords.get(texCoordIndices[1]));
-				v2.setTextureCoord(texCoords.get(texCoordIndices[2]));
+				var texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1
+				];
+				
+				var normalIndices = [
+					+tokens[1].split("/")[2] - 1,
+					+tokens[2].split("/")[2] - 1,
+					+tokens[3].split("/")[2] - 1
+				];
+				
+				var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+				var v1 =  new Vertex(vertices[vertexIndices[1]].getPos());
+				var v2 =  new Vertex(vertices[vertexIndices[2]].getPos());
+				v0.setNormal(normals[normalIndices[0]]);
+				v1.setNormal(normals[normalIndices[1]]);
+				v2.setNormal(normals[normalIndices[2]]);
+				v0.setTextureCoord(texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(texCoords[texCoordIndices[2]]);
+				
 				if(genTangents) {
 					generateTangents(v0, v1, v2);
 				}				
+				
 				addToSmoothingGroup(objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(currentSmoothingGroup),v0,v1,v2);
 			}
 			
 			// vertex/textureCoord
 			else {
 
-				int[] vertexIndices = {Integer.parseInt(tokens[1].split("/")[0]) - 1,
-							  	 	   Integer.parseInt(tokens[2].split("/")[0]) - 1,
-							  	 	   Integer.parseInt(tokens[3].split("/")[0]) - 1};
-				int[] texCoordIndices =  {Integer.parseInt(tokens[1].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[2].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[3].split("/")[1]) - 1};
+				var vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1
+				];
 				
-				Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-				Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-				Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-				v0.setTextureCoord(texCoords.get(texCoordIndices[0]));
-				v1.setTextureCoord(texCoords.get(texCoordIndices[1]));
-				v2.setTextureCoord(texCoords.get(texCoordIndices[2]));
+				var texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1
+				];
+				
+				var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+				var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+				var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+				v0.setTextureCoord(texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(texCoords[texCoordIndices[2]]);
+				
 				if(genTangents) {
 					generateTangents(v0, v1, v2);
 				}				
+				
 				addToSmoothingGroup(objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(currentSmoothingGroup),v0,v1,v2);
 			}		
 		}
@@ -306,16 +337,20 @@ function OBJLoader(generateTangents) {
 		// vertex
 		else {
 			
-			int[] vertexIndices = {Integer.parseInt(tokens[1]) - 1,
-					      Integer.parseInt(tokens[2]) - 1,
-					      Integer.parseInt(tokens[3]) - 1};
+			var vertexIndices = [
+				+tokens[1] - 1,
+				+tokens[2] - 1,
+				+tokens[3] - 1
+			];
 			
-			Vertex v0 = vertices.get(vertexIndices[0]);
-			Vertex v1 = vertices.get(vertexIndices[1]);
-			Vertex v2 = vertices.get(vertexIndices[2]);
+			var v0 = vertices[vertexIndices[0]];
+			var v1 = vertices[vertexIndices[1]];
+			var v2 = vertices[vertexIndices[2]];
+			
 			if(genTangents) {
 				generateTangents(v0, v1, v2);
 			}
+			
 			addToSmoothingGroup(objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(currentSmoothingGroup),v0,v1,v2);
 		}
 	}
@@ -324,23 +359,28 @@ function OBJLoader(generateTangents) {
 		// vertex//normal
 		if(tokens[1].contains("//")) {
 			
-			int[] vertexIndices = {Integer.parseInt(tokens[1].split("//")[0]) - 1,
-						  		   Integer.parseInt(tokens[2].split("//")[0]) - 1,
-						  		   Integer.parseInt(tokens[3].split("//")[0]) - 1,
-						  		   Integer.parseInt(tokens[4].split("//")[0]) - 1};
-			int[] normalIndices = {Integer.parseInt(tokens[1].split("//")[1]) - 1,
-								   Integer.parseInt(tokens[2].split("//")[1]) - 1,
-								   Integer.parseInt(tokens[3].split("//")[1]) - 1,
-								   Integer.parseInt(tokens[4].split("//")[1]) - 1};
+			var vertexIndices = [
+				+tokens[1].split("//")[0] - 1,
+				+tokens[2].split("//")[0] - 1,
+				+tokens[3].split("//")[0] - 1,
+				+tokens[4].split("//")[0] - 1
+			];
 			
-			Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-			Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-			Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-			Vertex v3 = new Vertex(vertices.get(vertexIndices[3]).getPos());
-			v0.setNormal(normals.get(normalIndices[0]));
-			v1.setNormal(normals.get(normalIndices[1]));
-			v2.setNormal(normals.get(normalIndices[2]));
-			v3.setNormal(normals.get(normalIndices[3]));
+			var normalIndices = [
+				+tokens[1].split("//")[1] - 1,
+				+tokens[2].split("//")[1] - 1,
+				+tokens[3].split("//")[1] - 1,
+				+tokens[4].split("//")[1] - 1
+			];
+			
+			var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+			var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+			var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+			var v3 = new Vertex(vertices[vertexIndices[3]].getPos());
+			v0.setNormal(normals[normalIndices[0]]);
+			v1.setNormal(normals[normalIndices[1]]);
+			v2.setNormal(normals[normalIndices[2]]);
+			v3.setNormal(normals[normalIndices[3]]);
 			
 			if(genTangents) {
 				generateTangents(v0, v1, v2);
@@ -354,31 +394,40 @@ function OBJLoader(generateTangents) {
 			// vertex/textureCoord/normal
 			if(tokens[1].split("/").length == 3) {
 
-				int[] vertexIndices = {Integer.parseInt(tokens[1].split("/")[0]) - 1,
-									   Integer.parseInt(tokens[2].split("/")[0]) - 1,
-									   Integer.parseInt(tokens[3].split("/")[0]) - 1,
-									   Integer.parseInt(tokens[4].split("/")[0]) - 1};
-				int[] texCoordIndices =  {Integer.parseInt(tokens[1].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[2].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[3].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[4].split("/")[1]) - 1};
-				int[] normalIndices = {Integer.parseInt(tokens[1].split("/")[2]) - 1,
-						               Integer.parseInt(tokens[2].split("/")[2]) - 1,
-						               Integer.parseInt(tokens[3].split("/")[2]) - 1,
-						               Integer.parseInt(tokens[4].split("/")[2]) - 1};
+				var vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1,
+					+tokens[4].split("/")[0] - 1
+				];
 				
-				Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-				Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-				Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-				Vertex v3 = new Vertex(vertices.get(vertexIndices[3]).getPos());
-				v0.setNormal(normals.get(normalIndices[0]));
-				v1.setNormal(normals.get(normalIndices[1]));
-				v2.setNormal(normals.get(normalIndices[2]));
-				v3.setNormal(normals.get(normalIndices[3]));			
-				v0.setTextureCoord(texCoords.get(texCoordIndices[0]));
-				v1.setTextureCoord(texCoords.get(texCoordIndices[1]));
-				v2.setTextureCoord(texCoords.get(texCoordIndices[2]));
-				v3.setTextureCoord(texCoords.get(texCoordIndices[3]));
+				var texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1,
+					+tokens[4].split("/")[1] - 1
+				];
+				
+				var normalIndices = [
+					+tokens[1].split("/")[2] - 1,
+					+tokens[2].split("/")[2] - 1,
+					+tokens[3].split("/")[2] - 1,
+					+tokens[4].split("/")[2] - 1
+				];
+				
+				var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+				var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+				var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+				var v3 = new Vertex(vertices[vertexIndices[3]].getPos());
+				v0.setNormal(normals[normalIndices[0]]);
+				v1.setNormal(normals[normalIndices[1]]);
+				v2.setNormal(normals[normalIndices[2]]);
+				v3.setNormal(normals[normalIndices[3]]);			
+				v0.setTextureCoord(texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(texCoords[texCoordIndices[2]]);
+				v3.setTextureCoord(texCoords[texCoordIndices[3]]);
+				
 				if(genTangents) {
 					generateTangents(v0, v1, v2);
 					generateTangents(v2, v1, v3);
@@ -390,23 +439,29 @@ function OBJLoader(generateTangents) {
 			// vertex/textureCoord
 			else {
 
-				int[] vertexIndices = {Integer.parseInt(tokens[1].split("/")[0]) - 1,
-						      		   Integer.parseInt(tokens[2].split("/")[0]) - 1,
-						      		   Integer.parseInt(tokens[3].split("/")[0]) - 1,
-						      		   Integer.parseInt(tokens[4].split("/")[0]) - 1};
-				int[] texCoordIndices =  {Integer.parseInt(tokens[1].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[2].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[3].split("/")[1]) - 1,
-										  Integer.parseInt(tokens[4].split("/")[1]) - 1};
+				var vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1,
+					+tokens[4].split("/")[0] - 1
+				];
 				
-				Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-				Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-				Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-				Vertex v3 = new Vertex(vertices.get(vertexIndices[3]).getPos());				
-				v0.setTextureCoord(texCoords.get(texCoordIndices[0]));
-				v1.setTextureCoord(texCoords.get(texCoordIndices[1]));
-				v2.setTextureCoord(texCoords.get(texCoordIndices[2]));
-				v3.setTextureCoord(texCoords.get(texCoordIndices[3]));
+				var texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1,
+					+tokens[4].split("/")[1] - 1
+				];
+				
+				var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+				var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+				var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+				var v3 = new Vertex(vertices[vertexIndices[3]].getPos());				
+				v0.setTextureCoord(texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(texCoords[texCoordIndices[2]]);
+				v3.setTextureCoord(texCoords[texCoordIndices[3]]);
+				
 				if(genTangents) {
 					generateTangents(v0, v1, v2);
 					generateTangents(v2, v1, v3);
@@ -419,15 +474,17 @@ function OBJLoader(generateTangents) {
 		// vertex
 		else {
 			
-			int[] vertexIndices = {Integer.parseInt(tokens[1]) - 1,
-					      		   Integer.parseInt(tokens[2]) - 1,
-					      		   Integer.parseInt(tokens[3]) - 1,
-					      		   Integer.parseInt(tokens[4]) - 1};
+			var vertexIndices = [
+				+tokens[1] - 1,
+				+tokens[2] - 1,
+				+tokens[3] - 1,
+				+tokens[4] - 1
+			];
 			
-			Vertex v0 = new Vertex(vertices.get(vertexIndices[0]).getPos());
-			Vertex v1 = new Vertex(vertices.get(vertexIndices[1]).getPos());
-			Vertex v2 = new Vertex(vertices.get(vertexIndices[2]).getPos());
-			Vertex v3 = new Vertex(vertices.get(vertexIndices[3]).getPos());
+			var v0 = new Vertex(vertices[vertexIndices[0]].getPos());
+			var v1 = new Vertex(vertices[vertexIndices[1]].getPos());
+			var v2 = new Vertex(vertices[vertexIndices[2]].getPos());
+			var v3 = new Vertex(vertices[vertexIndices[3]].getPos());
 			if(genTangents) {
 				generateTangents(v0, v1, v2);
 				generateTangents(v2, v1, v3);
@@ -439,11 +496,11 @@ function OBJLoader(generateTangents) {
 	
 	var addToSmoothingGroup = function(smoothingGroup, v0, v1, v2) {
 		
-		int index0 = processVertex(smoothingGroup, v0);
-		int index1 = processVertex(smoothingGroup, v1);
-		int index2 = processVertex(smoothingGroup, v2);
+		var index0 = processVertex(smoothingGroup, v0);
+		var index1 = processVertex(smoothingGroup, v1);
+		var index2 = processVertex(smoothingGroup, v2);
 		
-		Face face = new Face();
+		var face = new Face();
 		face.getIndices()[0] = index0;
 		face.getIndices()[1] = index1;
 		face.getIndices()[2] = index2;
@@ -453,18 +510,18 @@ function OBJLoader(generateTangents) {
 	}
 	
 	var addToSmoothingGroup = function(smoothingGroup, v0, v1, v2, v3) {
-		int index0 = processVertex(smoothingGroup, v0);
-		int index1 = processVertex(smoothingGroup, v1);
-		int index2 = processVertex(smoothingGroup, v2);
-		int index3 = processVertex(smoothingGroup, v3);
+		var index0 = processVertex(smoothingGroup, v0);
+		var index1 = processVertex(smoothingGroup, v1);
+		var index2 = processVertex(smoothingGroup, v2);
+		var index3 = processVertex(smoothingGroup, v3);
 		
-		Face face0 = new Face();
+		var face0 = new Face();
 		face0.getIndices()[0] = index0;
 		face0.getIndices()[1] = index1;
 		face0.getIndices()[2] = index2;
 		face0.setMaterial(materialname);
 		
-		Face face1 = new Face();
+		var face1 = new Face();
 		face1.getIndices()[0] = index0;
 		face1.getIndices()[1] = index2;
 		face1.getIndices()[2] = index3;
@@ -476,13 +533,13 @@ function OBJLoader(generateTangents) {
 	
 	var processVertex = function(smoothingGroup, previousVertex) {
 		if(smoothingGroup.getVertices().contains(previousVertex)) {
-			int index = smoothingGroup.getVertices().indexOf(previousVertex);
-			Vertex nextVertex = smoothingGroup.getVertices().get(index);
+			var index = smoothingGroup.getVertices().indexOf(previousVertex);
+			var nextVertex = smoothingGroup.getVertices().get(index);
 			if(!hasSameNormalAndTexture(previousVertex, nextVertex)) {				
 				if(nextVertex.getDublicateVertex() != null) {
 					return processVertex(smoothingGroup, nextVertex.getDublicateVertex());
 				} else {
-					Vertex newVertex = new Vertex();
+					var newVertex = new Vertex();
 					newVertex.setPos(previousVertex.getPos());
 					newVertex.setNormal(previousVertex.getNormal());
 					newVertex.setTextureCoord(previousVertex.getTextureCoord());
@@ -502,8 +559,8 @@ function OBJLoader(generateTangents) {
 	
 	var generatePolygon = function(smoothingGroups, polygon) {
 		
-		for(Integer key : smoothingGroups.keySet()) {
-			for(Face face : smoothingGroups.get(key).getFaces()) {
+		for(var key in smoothingGroups.keySet()) {
+			for(var face in smoothingGroups.get(key).getFaces()) {
 				if(face.getMaterial() == polygon.getMaterial()) {
 					if(!polygon.getVertices().contains(smoothingGroups.get(key).getVertices().get(face.getIndices()[0])))
 						polygon.getVertices().add(smoothingGroups.get(key).getVertices().get(face.getIndices()[0]));
@@ -521,71 +578,61 @@ function OBJLoader(generateTangents) {
 	}
 	
 	var generateTangents = function(v0, v1, v2) {
-		Vector3f delatPos1 = Vector3f.sub(v1.getPos(), v0.getPos());
-		Vector3f delatPos2 = Vector3f.sub(v2.getPos(), v0.getPos());
-		Vector2f uv0 = v0.getTextureCoord();
-		Vector2f uv1 = v1.getTextureCoord();
-		Vector2f uv2 = v2.getTextureCoord();
-		Vector2f deltaUv1 = Vector2f.sub(uv1, uv0);
-		Vector2f deltaUv2 = Vector2f.sub(uv2, uv0);
+		var delatPos1 = Vector3f.sub(v1.getPos(), v0.getPos());
+		var delatPos2 = Vector3f.sub(v2.getPos(), v0.getPos());
+		var uv0 = v0.getTextureCoord();
+		var uv1 = v1.getTextureCoord();
+		var uv2 = v2.getTextureCoord();
+		var deltaUv1 = Vector2f.sub(uv1, uv0);
+		var deltaUv2 = Vector2f.sub(uv2, uv0);
 
-		float r = 1.0f / (deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x);
+		var r = 1.0 / (deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x);
 		delatPos1.scale(deltaUv2.y);
 		delatPos2.scale(deltaUv1.y);
-		Vector3f tangent = Vector3f.sub(delatPos1, delatPos2);
+		var tangent = Vector3f.sub(delatPos1, delatPos2);
 		tangent.scale(r);
 		v0.setTangent(tangent);
 		v1.setTangent(tangent);
 		v2.setTangent(tangent);
 	}
 	
-	var convert = function(polygon) {		
-		Object[] positionObjectArray = new Object[polygon.getVertices().size()*3];
-		Object[] normalObjectArray = new Object[polygon.getVertices().size()*3];
-		Object[] textureObjectArray = new Object[polygon.getVertices().size()*2];
-		float[] tangents = null;
-		Integer[] objectArray = new Integer[polygon.getIndices().size()];
+	var convert = function(polygon) {	
+		var indices = polygon.getIndices().slice();
+		var vertices = polygon.getVertices();
 		
-		polygon.getIndices().toArray(objectArray);
-		List<Vertex> vertices = polygon.getVertices();
+		var positions = vertices.forEach((vertex, index, arr) => {
+			arr.splice(index, 1, vertex.getPos().x, vertex.getPos().y, vertex.getPost().z);
+		});
 		
-		positionObjectArray = vertices.stream()
-			.flatMap(vertex -> Stream.of(vertex.getPos().x, vertex.getPos().y, vertex.getPos().z))
-			.toArray();
-		normalObjectArray = vertices.stream()
-				.flatMap(vertex -> Stream.of(vertex.getNormal().x, vertex.getNormal().y, vertex.getNormal().z))
-				.toArray();
-		textureObjectArray = vertices.stream()
-				.flatMap(vertex -> Stream.of(vertex.getTextureCoord().x, 1 - vertex.getTextureCoord().y))
-				.toArray();
+		var normals = vertices.forEach((vertex, index, arr) => {
+			arr.splice(index, 1, vertex.getNormal().x, vertex.getNormal().y, vertex.getNormal().z);
+		});
 		
-		float[] positions = EngineUtils.toFloatArray(positionObjectArray);
-		float[] normals = EngineUtils.toFloatArray(normalObjectArray);
-		float[] textureCoords = EngineUtils.toFloatArray(textureObjectArray);
-		int[] indices = EngineUtils.toIntArray(objectArray);
+		var textureCoords = vertices.forEach((vertex, index, arr) => {
+			arr.splice(index, 1, vertex.getTextureCoord().x, 1 - vertex.getTextureCoord().y);
+		});
 		
-		BufferLoader loader = Loader.getInstance().getVertexLoader();
-		Mesh mesh = null;
+		var tangents = null;
+		
+		var mesh = null;
 		
 		if(genTangents) {
-			Object[] tangentObjectArray = new Object[polygon.getVertices().size()*3];
-			tangentObjectArray = vertices.stream()
-					.flatMap(vertex -> Stream.of(vertex.getTangent().x, vertex.getTangent().y, vertex.getTangent().z))
-					.toArray();
-
-			tangents = EngineUtils.toFloatArray(tangentObjectArray);
-			mesh = loader.loadToVAO(positions, textureCoords, normals, tangents, indices);
+			tangents = vertices.forEach((vertex, index, arr) => {
+				arr.splice(index, 1, vertex.getTangent().x, vertex.getTangent().y, vertex.getTangent().z);
+			});
+			
+			mesh = buffers.loadToVAO(positions, textureCoords, normals, tangents, indices);
 		} else {
-			mesh = loader.loadToVAO(positions, textureCoords, normals, indices);
+			mesh = buffers.loadToVAO(positions, textureCoords, normals, indices);
 		}
 		
 		return mesh;
 	}
 	
 	this.clean = function() {
-		vertices.length = 0;
-		normals.length = 0;
-		texCoords.length = 0;
+		_vertices.length = 0;
+		_normals.length = 0;
+		_texCoords.length = 0;
 	}
 }
 

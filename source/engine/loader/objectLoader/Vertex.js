@@ -3,19 +3,19 @@ function Vertex(position, texture) {
 	const BYTES = 14 * Float.BYTES;
 	const FLOATS = 14;
 	
-	var __position = position;
-	var __normal = new Vector3f(0, 0, 0);
-	var __textureCoord = texture || new Vector2f(0, 0);
-	var __tangent;
-	var __bitangent;
-	var __dublicateVertex = null;
+	var _position = position;
+	var _normal = new Vector3f(0, 0, 0);
+	var _textureCoord = texture || new Vector2f(0, 0);
+	var _tangent;
+	var _bitangent;
+	var _dublicateVertex = null;
 
 	this.getPosition = function() {
-		return __position;
+		return _position;
 	}
 
 	this.setPosition = function(position) {
-		__position = position;
+		_position = position;
 	}
 
 	this.getTextureCoord = function() {
@@ -23,40 +23,40 @@ function Vertex(position, texture) {
 	}
 
 	this.setTextureCoord = function(textureCoord) {
-		__textureCoord = textureCoord;
+		_textureCoord = textureCoord;
 	}
 
 
 	this.getNormal = function() {
-		return __normal;
+		return _normal;
 	}
 
 	this.setNormal = function(normal) {
-		__normal = normal;
+		_normal = normal;
 	}
 	
 	this.setDubilcateVertex = function(vertex) {
-		__dublicateVertex = vertex;
+		_dublicateVertex = vertex;
 	}
 	
 	this.getDublicateVertex = function() {
-		return __dublicateVertex;
+		return _dublicateVertex;
 	}
 
 	this.getTangent = function() {
-		return __tangent;
+		return _tangent;
 	}
 
 	this.setTangent = function(tangent) {
-		__tangent = tangent;
+		_tangent = tangent;
 	}
 
 	this.getBitangent = function() {
-		return __bitangent;
+		return _bitangent;
 	}
 
 	this.setBitangent = function(bitangent) {
-		__bitangent = bitangent;
+		_bitangent = bitangent;
 	}
 	
 }

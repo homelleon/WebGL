@@ -19,7 +19,9 @@ window.onload = (function() {
 				canvas.getContext("moz-webgl") ||
 				canvas.getContext("webkit-3d");
 	}
-	catch(e) {}
+	catch(err) {
+		console.log(err);
+	}
 	
 	if(!gl) {
 		var err = "WebGL is not supported by your browser";
