@@ -2,13 +2,28 @@ import {Matrix4f} from './matrix/Matrix4f';
 import {Vector3f} from './vector/Vector3f';
 import {gl} from './../../index';
 
+/**
+ * Utility maths calculataion class.
+ */
 function Maths() {
 	const PI = 3.14;
 	
+	/**
+	 * Shifts angle into radian. 
+	 */
 	this.toRadians = function(angle) {
 		return (angle / 180) * PI;
 	}
 	
+	/**
+	 * Creates perspective transformation (projection) matrix from arguments.
+	 * 
+	 * @param nearPlane - Vector4f-type object argument of nearest clipping plane
+	 * @param farPlane - Vector4f-type object argument of farthest clipping plane
+	 * @param FOV - Number-type argument of field of view
+	 *  
+	 * @return Matrix4f-type object of projection Matrix
+	 */
 	this.createProjectionMatrix = function(nearPlane, farPlane, FOV) {
 		var projectionMatrix = new Matrix4f();
 		var aspectRatio = gl.viewportWidth / gl.viewportHeight;
@@ -29,6 +44,13 @@ function Maths() {
 		
 	}
 	
+	/**
+	 * Creates camera view transformation (view) matrix from camera object.
+	 * 
+	 * @param camera - Camera-type object argument
+	 * 
+	 * @return Matrix4f-type object of view matrix
+	 */
 	this.createViewMatrix = function(camera) {
 		var viewMatrix = new Matrix4f();
 		viewMatrix.setIdentity();
