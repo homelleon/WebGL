@@ -107,6 +107,10 @@ window.onload = function () {
 		Object(__WEBPACK_IMPORTED_MODULE_2__engine_core_Tools__["a" /* initTools */])();
 		// start engine	
 		var loop = new __WEBPACK_IMPORTED_MODULE_0__engine_core_Loop__["a" /* Loop */]();
+		var mesh = __webpack_require__(23);
+		var reader = new FileReader();
+		//var text = reader.readAsText(mesh);
+		console.log(mesh);
 		for (var i = 0; i < 100; i++) {
 			loop.update();
 		}
@@ -1602,6 +1606,12 @@ function Maths() {
 }
 
 
+
+/***/ }),
+/* 23 */
+/***/ (function(module, exports, __webpack_require__) {
+
+module.exports = __webpack_require__.p + "meshes/cube.obj";
 
 /***/ })
 /******/ ]);

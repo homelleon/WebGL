@@ -7,6 +7,7 @@ import {Material} from './../primitive/Material';
 import {Vector3f} from './../math/vector/Vector3f';
 import {VAO} from './../primitive/VAO';
 import {buffers} from './../core/Loop';
+import {OBJLoader} from './../loader/objectLoader/OBJLoader';
 
 /**
  * Engine scene controll function.
@@ -66,8 +67,8 @@ function Scene() {
 	];
 	
 	var vao = buffers.createVAO(indices, vertices, textureCoords, normals);
-		
-	var mesh = new Mesh("entityMesh", vao);
+	var loader = OBJLoader();
+	var mesh = loader.load("","cube", null);
 	var material = new Material("entityMaterial");
 	var model = new Model("entityModel", mesh, material);	
 	var entity = new Entity("entity", model, new Vector3f(0, 0, 0));

@@ -8,6 +8,7 @@ const images = require('./webpack/images');
 const babel = require('./webpack/babel');
 const plugins = require('./webpack/plugins');
 const shaders = require('./webpack/shaders');
+const meshes = require('./webpack/obj');
 
 const PATHS = {
 	source: path.join(__dirname, 'source'),
@@ -23,6 +24,7 @@ module.exports = function(env) {
 			babel(),
 			pug(),
 			images(),
+			meshes(),
 			shaders()
 		]);
 	}
@@ -39,6 +41,7 @@ module.exports = function(env) {
 			babel(),
 			pug(),
 			images(),
+			meshes(),
 			shaders(),
 			devserver()
 		]);

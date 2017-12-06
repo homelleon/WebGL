@@ -1,8 +1,7 @@
-function Vertex(position, texture) {
+import {Vector2f} from './../../math/vector/Vector2f';
+import {Vector3f} from './../../math/vector/Vector3f';
 
-	const BYTES = 14 * Float.BYTES;
-	const FLOATS = 14;
-	
+function Vertex(position, texture) {	
 	var _position = position;
 	var _normal = new Vector3f(0, 0, 0);
 	var _textureCoord = texture || new Vector2f(0, 0);
@@ -60,3 +59,5 @@ function Vertex(position, texture) {
 	}
 	
 }
+
+export {Vertex};
