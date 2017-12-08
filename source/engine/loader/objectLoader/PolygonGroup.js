@@ -3,7 +3,7 @@ function PolygonGroup() {
 	var _smoothingGroups = new Map();
 	var _name = "";
 	
-	this.getPolygon = function() {
+	this.getPolygons = function() {
 		return _polygons;
 	}
 	

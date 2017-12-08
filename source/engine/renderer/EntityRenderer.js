@@ -25,7 +25,7 @@ function EntityRenderer(projectionMatrix) {
 	 */
 	this.render = function(scene) {
 		_shader.start();
-		var vao = scene.getEntities().get(0).getModels()[0].getMesh().getVAO();
+		var vao = scene.getEntities().get(0).getModels()[0].getMeshes()[0].getVAO();
 		vao.bindAttrib([ 0, 1, 2 ]);
 		_shader.loadViewMatrix(scene.getCamera().getViewMatrix());
 		_shader.loadDiffuseColor(new Vector3f( 1, 0, 1 ));

@@ -4,7 +4,7 @@ import {initTools, maths} from "./engine/core/Tools";
 
 var gl = null;
 
-window.onload = (function() {
+window.onload = (function() {	
 	var canvas = document.getElementById("gl");
 	if(!canvas) {
 		canvas = document.createElement("canvas");
