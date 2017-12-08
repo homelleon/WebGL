@@ -7,7 +7,7 @@ import {PolygonGroup} from './PolygonGroup';
 import {SmoothingGoup} from './SmoothingGroup';
 import {Face} from './Face';
 import {MeshObjec} from './MeshObject';
-import {LoaderUtil as Util} from './LoaderUtil';
+import {LoaderUtil} from './LoaderUtil';
 
 /**
  * Model loader for .obj files.
@@ -29,8 +29,8 @@ function OBJLoader(generateTangents) {
 	var _generateNormals = true;
 	var _genTangents = generateTangents || false;
 	
-	// bind properties
-	_objects.peekLast = Util.peekLast.bind(_objects);
+
+	_objects.peekLast = new LoaderUtil().peekLast.bind(_objects);
 	
 	/**
 	 * Loads meshes from folder path, objFile and mtlFile name arguments.
@@ -40,7 +40,7 @@ function OBJLoader(generateTangents) {
 	 * @param mtlFile - name of .mtl file 
 	 */
 	this.load = function(path, objFile, mtlFile) {
-		var time = new Data();
+		var time = new Date();
 		var request = new XMLHttpRequest();
 		// serch .mtl			
 		
@@ -48,7 +48,7 @@ function OBJLoader(generateTangents) {
 		request.send(null);
 		// TODO: Dangerous code!
 		while(!request.readyState == 4) {}
-		mtl = request.responseText;
+		var mtl = request.responseText;
 		
 		// load .mtl
 		if(!mtl) {
@@ -109,7 +109,7 @@ function OBJLoader(generateTangents) {
 					mtlReader.close();
 				}
 			catch(error) {
-				console.log(error.stackTrace());
+				console.log(error.stack);
 			}
 		}
 		
@@ -259,7 +259,7 @@ function OBJLoader(generateTangents) {
 			return meshes;
 		}
 		catch(err) {
-			console.log( err.stackTrace() );
+			console.log(err.stack);
 		}
 		
 		return null;

@@ -67,7 +67,7 @@ function Scene() {
 	];
 	
 	var vao = buffers.createVAO(indices, vertices, textureCoords, normals);
-	var loader = OBJLoader();
+	var loader = new OBJLoader();
 	var mesh = loader.load("","cube", null);
 	var material = new Material("entityMaterial");
 	var model = new Model("entityModel", mesh, material);	

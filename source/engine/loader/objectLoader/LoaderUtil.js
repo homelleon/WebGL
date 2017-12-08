@@ -3,7 +3,7 @@
  */
 function LoaderUtil() {
 	
-	LoaderUtil.removeEmptyStrings = function(data) {
+	this.removeEmptyStrings = function(data) {
 		var result = [];
 		for(var i = 0; i < data.length; i++) {
 			if(!data[i] == "") {
@@ -14,7 +14,7 @@ function LoaderUtil() {
 		return result;
 	}
 	
-	LoaderUtil.generateNormalsCW = function(vertices, indices) {
+	this.generateNormalsCW = function(vertices, indices) {
     	for (var i = 0; i < indices.length; i += 3 ) {
     		var v0 = vertices[indices[i    ]].getPos();
     	    var v1 = vertices[indices[i + 1]].getPos();
@@ -32,7 +32,7 @@ function LoaderUtil() {
     	}       
 	}
 	
-	LoaderUtil.generateNormalsCCW = function(vertices, indices)	{
+	this.generateNormalsCCW = function(vertices, indices)	{
 	    for (var i = 0; i < indices.length; i += 3 ) {
 	    	var v0 = vertices[indices[i    ]].getPos();
 	    	var v1 = vertices[indices[i + 1]].getPos();
@@ -50,7 +50,7 @@ function LoaderUtil() {
 	    }       
 	}
 	
-	LoaderUtil.peekLast = function() {
+	this.peekLast = function() {
 		return this[this.length - 1];
 	}
 }

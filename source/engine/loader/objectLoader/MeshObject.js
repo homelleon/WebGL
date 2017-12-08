@@ -1,11 +1,11 @@
-import {LoaderUtil as Utils} from './LoaderUtil';
+import {LoaderUtil} from './LoaderUtil';
 
 function MeshObject() {
 	var _polygonGroups = [];
 	var _name = "";
 	
 	// bind properties
-	_polygonGroups.peekLast = Util.peekLast.bind(_polygonGroups);
+	_polygonGroups.peekLast = new LoaderUtil().peekLast.bind(_polygonGroups);
 	
 	this.getPolygonGroups = function() {
 		return _polygonGroups;
