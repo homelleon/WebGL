@@ -13,11 +13,11 @@ function Polygon() {
 	}
 	
 	this.getVertices = function() {
-		return _verices;
+		return _vertices;
 	}
 	
 	this.setVertices = function(vertices) {
-		_vertices = vertices;
+		_vertices = vertices.slice();
 	}
 	
 	this.getIndices = function() {

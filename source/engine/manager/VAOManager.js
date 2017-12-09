@@ -14,6 +14,7 @@ function VAOManager() {
 		if(textures) {
 			vao.createAttribute(1, 2, textures);
 		}
+		
 		if(normals) {
 			vao.createAttribute(2, 3, normals);
 		}

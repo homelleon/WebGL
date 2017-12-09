@@ -14,6 +14,7 @@ function Loop() {
 	var _renderer = new MainRenderer();
 	buffers = new VAOManager();
 	var _scene = new Scene();
+	
 	// methods
 	this.update = function() {
 		_renderer.render(_scene);

@@ -36,10 +36,14 @@ window.onload = (function() {
 		initTools();
 	// start engine	
 		var loop = new Loop();
-		for(var i = 0; i < 100; i++) {
+		loop.update();
+		var update = setTimeout(function() {
+			console.log("???");
 			loop.update();
-		}
-		loop.stop();
+			loop.stop();
+		}, 1000);
+		update();
+		
 	}
 })();
 

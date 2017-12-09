@@ -5,8 +5,8 @@ function Vertex(position, texture) {
 	var _position = position;
 	var _normal = new Vector3f(0, 0, 0);
 	var _textureCoord = texture || new Vector2f(0, 0);
-	var _tangent;
-	var _bitangent;
+	var _tangent = null;
+	var _bitangent = null;
 	var _dublicateVertex = null;
 
 	this.getPosition = function() {
@@ -18,7 +18,7 @@ function Vertex(position, texture) {
 	}
 
 	this.getTextureCoord = function() {
-		return textureCoord;
+		return _textureCoord;
 	}
 
 	this.setTextureCoord = function(textureCoord) {

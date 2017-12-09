@@ -68,12 +68,17 @@ function Scene() {
 	
 	var vao = buffers.createVAO(indices, vertices, textureCoords, normals);
 	var loader = new OBJLoader();
-	var meshes = loader.load("","cube", null);
+	var meshes = loader.load("", "cube", null);
 	var material = new Material("entityMaterial");
-	var model = new Model("entityModel", meshes, material);	
+	var model = new Model("entityModel", meshes, material);
 	var entity = new Entity("entity", model, new Vector3f(0, 0, 0));
 	
 	_entities.add(entity);
+	
+	document.onclick = function() {
+		_camera.increasePosition(-1, 0, -1);	
+		console.log("11");
+	};
 	
 	// methods
 	this.getCamera = function() {
