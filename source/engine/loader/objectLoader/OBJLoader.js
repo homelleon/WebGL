@@ -114,8 +114,8 @@ function OBJLoader(generateTangents) {
 		}
 		
 		// load .obj
-		require('./../../../file/model/cube.obj');
-		request.open('GET', './meshes/cube.obj', false);
+		require('./../../../file/model/'+ path + objFile + '.obj');
+		request.open('GET', './meshes/'+ path + objFile + '.obj', false);
 		request.send(null);
 		// TODO: Dangerous code!
 		while(!request.status == 4) {}

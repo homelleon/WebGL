@@ -53,6 +53,6 @@ function LoaderUtil() {
 	this.peekLast = function() {
 		return this[this.length - 1];
 	}
-}
+};
 
 export {LoaderUtil};

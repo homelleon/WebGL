@@ -37,14 +37,23 @@ window.onload = (function() {
 	// start engine	
 		var loop = new Loop();
 		loop.update();
-		var update = setTimeout(function() {
-			console.log("???");
+	// start looping
+		(function looping() {
 			loop.update();
-			loop.stop();
-		}, 1000);
-		update();
-		
+			requestAnimFrame(looping, canvas);	
+		})();
 	}
+});
+
+window.requestAnimFrame = (function() {
+	return window.requestAnimationFrame || 
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.onRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function(callback, element) {
+		return window.setTimeout(callback, 100 / 60);
+	};
 })();
 
 export {gl};

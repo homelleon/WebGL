@@ -45,6 +45,6 @@ function MeshData(vertices, indices) {
 		_isTangentSpace = isTangentSpace;
 	}
 	
-}
+};
 
 export {MeshData};
