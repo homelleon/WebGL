@@ -25,10 +25,15 @@ function EntityRenderer(projectionMatrix) {
 	 */
 	this.render = function(scene) {
 		_shader.start();
-		let vao = scene.getEntities().get(0).getModels()[0].getMeshes()[0].getVAO();
+		let entity = scene.getEntities().get(0);
+		let model = entity.getModels()[0];
+		let material = model.getMaterial();
+		let vao = model.getMeshes()[0].getVAO();
 		vao.bindAttrib([ 0, 1, 2 ]);
 		_shader.loadViewMatrix(scene.getCamera().getViewMatrix());
 		_shader.loadDiffuseColor(new Vector3f( 1, 0, 1 ));
+		_shader.loadLights(scene.getLights());
+		_shader.loadShineVariables(material.getShininess(), material.getReflectivity());
 		gl.drawElements(gl.TRIANGLES, vao.getIndexBuffer().getSize(), gl.UNSIGNED_SHORT, 0);
 		vao.unbindAttrib([ 0, 1, 2 ]);
 		_shader.stop();

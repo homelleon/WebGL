@@ -2,9 +2,13 @@ import {Vector3f} from './../../math/vector/Vector3f';
 import {Matrix4f} from './../../math/matrix/Matrix4f';
 
 function Camera(name) {
+	const speed = 100;
+	const runSpeed = 400;
+	const turnSpeed = 1;
+	
 	var _name = name;
 	var _position = new Vector3f(0, 0, 0); 
-	var _pitch = 20;
+	var _pitch = 0;
 	var _yaw = 0;
 	var _roll = 0;
 	var _target = null;
@@ -16,10 +20,10 @@ function Camera(name) {
 	var _currentStrafeSpeed = 0;
 	
 	this.move = function() {
-		var yawAngle = _currentTurnSpeed * 20;
-		var pitchAngle = _currentPitchSpeed * 20;
-		var forwardDistance = _currentForwardSpeed * 20;
-		var strafeDistance = _currentStrafeSpeed * 20;
+		var yawAngle = _currentTurnSpeed * 0.6;
+		var pitchAngle = _currentPitchSpeed * 0.6;
+		var forwardDistance = _currentForwardSpeed * 0.6;
+		var strafeDistance = _currentStrafeSpeed * 0.6;
 		
 		this.increaseRotation(0, yawAngle, pitchAngle);
 		
@@ -40,19 +44,20 @@ function Camera(name) {
 	
 	this.addSpeed = function(forward, slide) {
 		if(forward) {
-			_currentForwardSpeed += forward;
+			_currentForwardSpeed += speed * forward;
 		}
 		if(slide) {
-			_currentStrafeSpeed += slide;
+			_currentStrafeSpeed += speed * slide;
 		}
 	}
 	
 	this.addTurnSpeed = function(turn, pitch) {
 		if(turn) {
-			_currentTurnSpeed += turn;
+			_currentTurnSpeed -= turnSpeed * turn;
 		}
+		
 		if(pitch) {
-			_currentPitchSpeed += pitch;
+			_currentPitchSpeed -= turnSpeed * pitch;
 		}
 	}
 	
@@ -64,16 +69,16 @@ function Camera(name) {
 		return Math.createViewMatrix(this);
 	}
 	
-	this.increasePosition = function(x, y, z) {
-		_position.x += x;
-		_position.y += y;
-		_position.z += z;		
+	this.increasePosition = function(dx, dy, dz) {
+		_position.x += dx;
+		_position.y += dy;
+		_position.z += dz;		
 	}
 	
-	this.increaseRotation = function(x, y, z) {
-		_roll += x;
-		_yaw += y;
-		_pitch += z;
+	this.increaseRotation = function(dx, dy, dz) {
+		_roll += dx;
+		_yaw += dy;
+		_pitch += dz;
 	}
 	
 	this.increaseTargetAngle = function(angle) {

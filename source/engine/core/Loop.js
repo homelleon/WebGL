@@ -19,8 +19,9 @@ function Loop() {
 	
 	// methods
 	this.update = function() {
-		_renderer.render(_scene);
 		_scene.getCamera().move();
+		_renderer.render(_scene);
+		_inputs.update();
 	}
 	
 	this.stop = function() {

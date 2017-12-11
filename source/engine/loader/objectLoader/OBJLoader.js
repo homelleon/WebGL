@@ -9,8 +9,10 @@ import {SmoothingGroup} from './SmoothingGroup';
 import {Face} from './Face';
 import {MeshObject} from './MeshObject';
 import {LoaderUtil} from './LoaderUtil';
+
+// TODO: refactor this
 /**
- * Model loader for .obj files.
+ * Model loader for .obj and .mtl files.
  * 
  * @param generateTangents - boolean argument to define if 
  * 							the loader will generate tangents
@@ -43,191 +45,198 @@ function OBJLoader(generateTangents) {
 		var time = new Date();
 		var util = new LoaderUtil;
 		var request = new XMLHttpRequest();
-		// serch .mtl			
 		
-		request.open('GET', './meshes/'+ path + mtlFile + '.mtl', true);
-		request.send(null);
-		// TODO: Dangerous code!
-		while(!request.status == 4) {}
-		var mtl = request.responseText;
+		if(mtlFile) {
+			// loading mtl file
+			request.open('GET', './meshes/'+ path + mtlFile + '.mtl', true);
+			request.send(null);
+			// TODO: Dangerous code!
+			while(!request.status == 4) {}
+			var mtl = request.responseText;
+			
+			// parsing .mtl
+			if(!mtl) {
+				try {						
+					let lines = mtl.split["\r\n"];						
+					var currentMtl = "";
+					  
+					for(var i = 0; i < lines.length; i++) {
+						let tokens = lines[i].split(" ");
+						tokens = util.removeEmptyStrings(tokens);
+						
+						if(!tokens.length) {
+							continue;
+						}
+						
+						if(tokens[0] == "newmtl") {
+							let material = new Material(tokens[1]);
+							materials.set(tokens[1], material);
+							currentMtl = tokens[1];
+						}
+						
+						if(tokens[0] == "Kd") {
+							if(tokens.length > 1) {
+								let color = new Vector3f(+tokens[1], +tokens[2], +tokens[3]);
+								materials.get(currentMtl).setColor(color);
+							}
+						}
+						
+						if(tokens[0] == "map_Kd") {
+							if(tokens.length > 1){
+								materials.get(currentMtl).setDiffuseMap(new Texture2D("diffuseMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "map_Ks") {
+							if(tokens.length > 1){
+								materials.get(currentMtl).setSpecularMap(new Texture2D("specularMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "map_bump") {
+							if(tokens.length > 1) {
+								materials.get(currentMtl).setNormalMap(new Texture2D("normalMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "illum") {
+							if(tokens.length > 1)
+								materials.get(currentMtl).setEmission(Float.valueOf(tokens[1]));
+						}
+						
+						if(tokens[0] == "Ns") {
+							if(tokens.length > 1)
+								materials.get(currentMtl).setShininess(Float.valueOf(tokens[1]));
+						}
+					}
+					
+					mtlReader.close();
+				} catch(error) {
+					console.log(error.stack);
+				}
+			}
+		}
 		
-		// load .mtl
-		if(!mtl) {
-			try {						
-				let lines = mtl.split["\r\n"];						
-				var currentMtl = "";
-				  
-				for(var i = 0; i < lines.length; i++) {
-					let tokens = lines[i].split(" ");
-					tokens = util.removeEmptyStrings(tokens);
-					
-					if(!tokens.length) {
-						continue;
-					}
-					
-					if(tokens[0] == "newmtl") {
-						let material = new Material(tokens[1]);
-						materials.set(tokens[1], material);
-						currentMtl = tokens[1];
-					}
-					
-					if(tokens[0] == "Kd") {
-						if(tokens.length > 1) {
-							let color = new Vector3f(+tokens[1], +tokens[2], +tokens[3]);
-							materials.get(currentMtl).setColor(color);
-						}
-					}
-					
-					if(tokens[0] == "map_Kd") {
-						if(tokens.length > 1){
-							materials.get(currentMtl).setDiffuseMap(new Texture2D("diffuseMap", path + "/" + tokens[1]));
-						}
-					}
-					
-					if(tokens[0] == "map_Ks") {
-						if(tokens.length > 1){
-							materials.get(currentMtl).setSpecularMap(new Texture2D("specularMap", path + "/" + tokens[1]));
-						}
-					}
-					
-					if(tokens[0] == "map_bump") {
-						if(tokens.length > 1) {
-							materials.get(currentMtl).setNormalMap(new Texture2D("normalMap", path + "/" + tokens[1]));
-						}
-					}
-					
-					if(tokens[0] == "illum") {
-						if(tokens.length > 1)
-							materials.get(currentMtl).setEmission(Float.valueOf(tokens[1]));
-					}
-					
-					if(tokens[0] == "Ns") {
-						if(tokens.length > 1)
-							materials.get(currentMtl).setShininess(Float.valueOf(tokens[1]));
-					}
+		// loading .obj file
+		try {
+			require('./../../../file/model/'+ path + objFile + '.obj');
+			request.open('GET', './meshes/'+ path + objFile + '.obj', false);
+			request.send(null);
+			// TODO: Dangerous code!
+			while(!request.status == 4) {}
+			
+			if(!request.status == 200) {
+				throw "obj loading failed!";
+			}
+			var obj = request.responseText;
+			
+			// parsing obj
+			if(!obj) {
+				throw "obj file is empty!";
+			}
+			let lines = obj.split("\r\n");		
+			
+			for(let i = 0; i < lines.length; i++) {
+				let tokens = lines[i].split(" ");
+				tokens = util.removeEmptyStrings(tokens);
+				
+				if(!tokens.length || tokens[0] == "#") {
+					continue;
 				}
 				
-				mtlReader.close();
-			} catch(error) {
-				console.log(error.stack);
-			}
-		}
-		
-		// load .obj
-		require('./../../../file/model/'+ path + objFile + '.obj');
-		request.open('GET', './meshes/'+ path + objFile + '.obj', false);
-		request.send(null);
-		// TODO: Dangerous code!
-		while(!request.status == 4) {}
-		if(!request.status == 200) {
-			throw "obj loading failed";
-		}
-		var obj = request.responseText;
-		
-		if(!obj) {
-			throw "obj file is empty!";
-		}
-		
-		let lines = obj.split("\r\n");		
-		
-		for(let i = 0; i < lines.length; i++) {
-			let tokens = lines[i].split(" ");
-			tokens = util.removeEmptyStrings(tokens);
-			
-			if(!tokens.length || tokens[0] == "#") {
-				continue;
-			}
-			
-			if(tokens[0] == "v") {
-				_vertices.push(
-					new Vertex(
+				if(tokens[0] == "v") {
+					_vertices.push(
+						new Vertex(
+							new Vector3f(+tokens[1], +tokens[2], +tokens[3])
+						)
+					);
+				}
+				
+				if(tokens[0] == "vn") {
+					_normals.push(
 						new Vector3f(+tokens[1], +tokens[2], +tokens[3])
-					)
-				);
-			}
-			
-			if(tokens[0] == "vn") {
-				_normals.push(
-					new Vector3f(+tokens[1], +tokens[2], +tokens[3])
-				);
-			}
-			
-			if(tokens[0] ==  "vt") {
-				_texCoords.push(
-					new Vector2f(+tokens[1], +tokens[2])
-				);
-			}
-			
-			if(tokens[0] == "o") {
-				let object = new MeshObject();
-				object.setName(tokens[1]);
-				_objects.push(new MeshObject());
-			}
-			
-			if(tokens[0] == "g") {
-				let polygonGroup = new PolygonGroup();	
-				if (tokens.length > 1) {
-					polygonGroup.setName(tokens[1]);
+					);
 				}
 				
-				if (_objects.length == 0) {
+				if(tokens[0] ==  "vt") {
+					_texCoords.push(
+						new Vector2f(+tokens[1], +tokens[2])
+					);
+				}
+				
+				if(tokens[0] == "o") {
+					let object = new MeshObject();
+					object.setName(tokens[1]);
 					_objects.push(new MeshObject());
 				}
-				_objects.peekLast().getPolygonGroups().push(polygonGroup);
-			}
-			
-			if(tokens[0] == "usemtl") {
-				let polygon = new Polygon();
-				_materialName = tokens[1];
-				polygon.setMaterial(tokens[1]);
-				if(_objects.peekLast().getPolygonGroups().length == 0) {
-					_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
-				}
-				_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(polygon);
-			}
-			
-			if(tokens[0] == "s") {
-				if(_objects.peekLast().getPolygonGroups().length == 0) {
-					_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
-				}
 				
-				if(tokens[1] == "off" || tokens[1] == "0") {
-					_currentSmoothingGroup = 0;
+				if(tokens[0] == "g") {
+					let polygonGroup = new PolygonGroup();	
+					if (tokens.length > 1) {
+						polygonGroup.setName(tokens[1]);
+					}
 					
-					if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(0)) {
+					if (_objects.length == 0) {
+						_objects.push(new MeshObject());
+					}
+					_objects.peekLast().getPolygonGroups().push(polygonGroup);
+				}
+				
+				if(tokens[0] == "usemtl") {
+					let polygon = new Polygon();
+					_materialName = tokens[1];
+					polygon.setMaterial(tokens[1]);
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
+					}
+					_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(polygon);
+				}
+				
+				if(tokens[0] == "s") {
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
+					}
+					
+					if(tokens[1] == "off" || tokens[1] == "0") {
+						_currentSmoothingGroup = 0;
+						
+						if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(0)) {
+							_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new SmoothingGroup());
+						}
+					} else {
+						_currentSmoothingGroup = +tokens[1];
+						if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(_currentSmoothingGroup)) {
+							_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new SmoothingGroup());
+						}
+					}
+				}
+				
+				if(tokens[0] == "f") {
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
+					}
+					
+					if(_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().length == 0) {
+						_currentSmoothingGroup = 1;
 						_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new SmoothingGroup());
 					}
-				} else {
-					_currentSmoothingGroup = +tokens[1];
-					if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(_currentSmoothingGroup)) {
-						_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new SmoothingGroup());
+					
+					if(_objects.peekLast().getPolygonGroups().peekLast().getPolygons().length == 0) {
+						_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(new Polygon());
+					}
+	
+					if(tokens.length == 4) {
+						parseTriangleFace(tokens);
+					}
+					
+					if(tokens.length == 5) {
+						parseQuadFace(tokens);
 					}
 				}
+				
 			}
-			
-			if(tokens[0] == "f") {
-				if(_objects.peekLast().getPolygonGroups().length == 0) {
-					_objects.peekLast().getPolygonGroups().push(new PolygonGroup());
-				}
-				
-				if(_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().length == 0) {
-					_currentSmoothingGroup = 1;
-					_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new SmoothingGroup());
-				}
-				
-				if(_objects.peekLast().getPolygonGroups().peekLast().getPolygons().length == 0) {
-					_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(new Polygon());
-				}
-
-				if(tokens.length == 4) {
-					parseTriangleFace(tokens);
-				}
-				
-				if(tokens.length == 5) {
-					parseQuadFace(tokens);
-				}
-			}
-			
+		} catch(error) {
+			console.log( err.stack );
 		}
 		
 		if(_normals.length == 0 && _generateNormals) {

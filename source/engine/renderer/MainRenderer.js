@@ -13,6 +13,8 @@ function MainRenderer() {
 	var _projectionMatrix = Math.createProjectionMatrix(NEAR_PLANE, FAR_PLANE, FOV);
 	var _entityRenderer = new EntityRenderer(_projectionMatrix);
 	
+	gl.enable(gl.DEPTH_TEST);
+	
 	// methods
 	/**
 	 * Renders scene objects.
@@ -20,7 +22,7 @@ function MainRenderer() {
 	 */
 	this.render = function(scene) {
 		gl.clearColor(0.0, 1.0, 1.0, 0.5);
-		gl.clear(gl.COLOR_BUFFER_BIT);
+		gl.clear(gl.COLOR_BUFFER_BIT || gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
 		_entityRenderer.render(scene);
 	}

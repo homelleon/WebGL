@@ -12,6 +12,10 @@ function ObjectManager() {
 	this.get = function(index) {
 		return _elements[index];
 	}
+	
+	this.length = function() {
+		return _elements.length;
+	}
 }
 
 export {ObjectManager};

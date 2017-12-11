@@ -1,6 +1,7 @@
 import {Camera} from './../object/camera/Camera';
 import {ObjectManager} from './../manager/ObjectManager';
 import {Entity} from './../object/entity/Entity';
+import {Light} from './../object/light/Light';
 import {Model} from './../primitive/Model';
 import {Mesh} from './../primitive/Mesh';
 import {Material} from './../primitive/Material';
@@ -14,59 +15,13 @@ import {OBJLoader} from './../loader/objectLoader/OBJLoader';
  * 
  */
 function Scene() {
-	var _camera = new Camera("MyCamera");	
+	// initialization
+	var _camera = new Camera("MyCamera");
+	var _sun = null;
 	var _entities = new ObjectManager();
+	var _lights = new ObjectManager();
 	
-	// entity creation	
-	var vertices = [
-        // face
-        -0.5, -0.5, 0.5,
-        -0.5, 0.5, 0.5,
-         0.5, 0.5, 0.5,
-         0.5, -0.5, 0.5,
-        // back 
-        -0.5, -0.5, -0.5,
-        -0.5, 0.5, -0.5,
-         0.5, 0.5, -0.5,
-         0.5, -0.5, -0.5
-	];
-	
-	var textureCoords = [
-        // face
-         0.0, 0.0,
-         0.5, 0.5,
-         0.5, 0.5,
-         0.5, -0.5,
-        // back 
-        -0.5, -0.5,
-        -0.5, 0.5,
-         0.5, 0.5,
-         0.5, -0.5
-	];
-	
-	var normals = [
-        // face
-         0, 1, 0,
-         0, 1, 0,
-         0, 1, 0,
-         0, 1, 0,
-        // back 
-         0, -1, 0,
-         0, -1, 0,
-         0, -1, 0,
-         0, -1, 0
-	];
-	
-	var indices = [
-		0, 1, 1, 2, 
-		2, 3, 3, 0, 
-		0, 4, 4, 5, 
-		5, 6, 6, 7, 
-		7, 4, 1, 5, 
-		2, 6, 3, 7
-	];
-	
-	var vao = buffers.createVAO(indices, vertices, textureCoords, normals);
+	// prepare entities
 	var loader = new OBJLoader();
 	var meshes = loader.load("", "spartan", null);
 	var material = new Material("entityMaterial");
@@ -74,6 +29,14 @@ function Scene() {
 	var entity = new Entity("entity", model, new Vector3f(0, 0, 0));
 	
 	_entities.add(entity);
+	
+	// prepare lights
+	var sun = new Light(
+			new Vector3f(1000, 5000, 1000), 
+			new Vector3f(1.3, 1.3, 1.3)
+		);
+	
+	_lights.add(sun);
 
 	// methods
 	this.getCamera = function() {
@@ -82,6 +45,14 @@ function Scene() {
 	
 	this.getEntities = function() {
 		return _entities;
+	}
+	
+	this.getLights = function() {
+		return _lights;
+	}
+	
+	this.getSun = function() {
+		return _sun;
 	}
 }
 
