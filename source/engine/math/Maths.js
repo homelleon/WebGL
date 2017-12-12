@@ -44,6 +44,10 @@ function Maths() {
 		
 	}
 	
+	this.createModelMatrix = function(translation, rx, ry, rz, scale) {
+		
+	}
+	
 	/**
 	 * Creates camera view transformation (view) matrix from camera object.
 	 * 

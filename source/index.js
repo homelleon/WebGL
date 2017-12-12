@@ -30,13 +30,17 @@ window.onload = (function() {
 	}
 	
 	if(gl) {
+	// make canvas full size 
+		canvas.height = document.documentElement.clientHeight;
+		canvas.width = document.documentElement.clientWidth;
+	// initialize gl size
 		gl.viewportHeight = canvas.height;
 		gl.viewportWidth = canvas.width;
+	// initialize exteriors
 		initExtentions();
 		initTools();
-	// start engine	
+	// initialize engine
 		var loop = new Loop();
-		loop.update();
 	// start looping
 		(function looping() {
 			loop.update();

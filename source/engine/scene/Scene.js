@@ -9,6 +9,7 @@ import {Vector3f} from './../math/vector/Vector3f';
 import {VAO} from './../primitive/VAO';
 import {buffers} from './../core/Loop';
 import {OBJLoader} from './../loader/objectLoader/OBJLoader';
+import {Texture} from './../texture/Texture';
 
 /**
  * Engine scene controll function.
@@ -21,23 +22,29 @@ function Scene() {
 	var _entities = new ObjectManager();
 	var _lights = new ObjectManager();
 	
+	var sceneReadyEvent = new CustomEvent("scene-ready");
+	
 	// prepare entities
 	var loader = new OBJLoader();
 	var meshes = loader.load("", "spartan", null);
-	var material = new Material("entityMaterial");
+	var material = new Material("entityMaterial");	
+		
+	// prepare lights
+	var sun = new Light(
+		new Vector3f(1000, 5000, 1000), 
+		new Vector3f(1.3, 1.3, 1.3)
+	);
+	
+	_lights.add(sun);
+	
+	// prepare entities
+	var entityTexture = new Texture("spartanTexture", "spartan.png");
+	material.setDiffuseMap(entityTexture);
 	var model = new Model("entityModel", meshes, material);
 	var entity = new Entity("entity", model, new Vector3f(0, 0, 0));
 	
 	_entities.add(entity);
 	
-	// prepare lights
-	var sun = new Light(
-			new Vector3f(1000, 5000, 1000), 
-			new Vector3f(1.3, 1.3, 1.3)
-		);
-	
-	_lights.add(sun);
-
 	// methods
 	this.getCamera = function() {
 		return _camera;

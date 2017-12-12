@@ -6,6 +6,7 @@ precision mediump float;
 varying vec3 toLightVector[MAX_LIGHTS];
 varying vec3 surfaceNormal;
 varying vec3 toCameraVector;
+varying vec2 textureCoords;
 
 // > uniforms <
 // lights
@@ -13,6 +14,9 @@ uniform vec3 lightColor[MAX_LIGHTS];
 uniform vec3 lightAttenuation[MAX_LIGHTS];
 uniform float shininess;
 uniform float reflectivity;
+
+// texture
+uniform sampler2D diffuseMap;
 
 void main(void) {
 	
@@ -42,7 +46,8 @@ void main(void) {
 	}
 
 	// fragment color
-	vec4 out_Color = vec4(1.0, 0.0, 0.0, 1.0);
+	vec4 out_Color = texture2D(diffuseMap, textureCoords);
+	
 	out_Color = vec4(totalDiffuse, 1.0) * out_Color + vec4(totalSpecular, 1.0);
 	
 	gl_FragColor = out_Color;

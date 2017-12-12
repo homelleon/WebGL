@@ -28,6 +28,8 @@ function EntityShader() {
 	const UNIFORM_LIGHT_ATTENUATION = 'lightAttenuation';
 	const UNIFORM_SHININESS = 'shininess';
 	const UNIFORM_REFLECTIVITY = 'reflectivity';
+	// texture
+	const UNIFORM_DIFFUSE_MAP = 'diffuseMap';
 	
 	// methods
 	// @override
@@ -46,6 +48,8 @@ function EntityShader() {
 		this.addUniform(UNIFORM_INVERSE_VIEW_MATRIX);
 		// color
 		this.addUniform(UNIFORM_DIFFUSE_COLOR);
+		// texture
+		this.addUniform(UNIFORM_DIFFUSE_MAP);
 		// light
 		this.addUniform(UNIFORM_SHININESS);
 		this.addUniform(UNIFORM_REFLECTIVITY);
@@ -54,6 +58,10 @@ function EntityShader() {
 			this.addUniform(UNIFORM_LIGHT_COLOR + "[" + i + "]");
 			this.addUniform(UNIFORM_LIGHT_ATTENUATION + "[" + i + "]");
 		}
+	}
+	
+	this.connectTextureUnits = function() {
+		this.loadInt(UNIFORM_DIFFUSE_MAP, 0);
 	}
 	
 	this.loadProjectionMatrix = function(matrix) {

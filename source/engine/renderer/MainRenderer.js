@@ -5,7 +5,7 @@ import {EntityRenderer} from './EntityRenderer';
  * Main enigine rendering function. 
  */
 function MainRenderer() {
-	const FOV = 120;
+	const FOV = 70;
 	const NEAR_PLANE = 0.1;
 	const FAR_PLANE = 10000;
 	
@@ -14,6 +14,8 @@ function MainRenderer() {
 	var _entityRenderer = new EntityRenderer(_projectionMatrix);
 	
 	gl.enable(gl.DEPTH_TEST);
+	gl.enable(gl.CULL_FACE);
+	gl.cullFace(gl.BACK);
 	
 	// methods
 	/**

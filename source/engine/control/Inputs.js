@@ -26,15 +26,25 @@ function Inputs(scene) {
 		}
 		
 		if(event.keyCode == 32) { // space
-			_scene.getCamera().increasePosition(0, 5, 0);
+			_camera.increasePosition(0, 5, 0);
 		}
 		
 		if(event.keyCode == 67) { // c
-			_scene.getCamera().increasePosition(0, -5, 0);
+			_camera.increasePosition(0, -5, 0);
 		}
 	};
 	
+	var activateCamRotation = function() {
+		_camera.setCanRotate(true);
+	};
+	
+	var deactivateCamRotation = function() {
+		_camera.setCanRotate(false);
+	}
+	
 	document.addEventListener("keydown", move);
+	document.addEventListener("mousedown", activateCamRotation);
+	document.addEventListener("mouseup", deactivateCamRotation);
 	
 	this.update = function() {
 		_camera.addTurnSpeed(_mouse.getDX(), _mouse.getDY());

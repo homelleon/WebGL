@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -68,17 +68,45 @@
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Vector3f; });
+function Vector3f(x, y, z) {
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	
+	this.sub = function(leftVector, rightVector) {
+		if(!rightVector) {
+			this.x = this.x - leftVector.x;
+			this.y = this.y - leftVector.y;
+			this.z = this.z - leftVector.z;
+			
+			return this;
+		} else {
+			return new Vector3f(leftVector.x - rightVector.x, 
+					leftVector.y - rightVector.y,
+					leftVector.z - rightVector.z);
+		} 
+	}
+} 
+
+
+
+/***/ }),
+/* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return gl; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_core_Loop__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_core_Extentions__ = __webpack_require__(23);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_core_Tools__ = __webpack_require__(24);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_core_Loop__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__engine_core_Extentions__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__engine_core_Tools__ = __webpack_require__(39);
 
 
 
 
 var gl = null;
 
-window.onload = (function() {
+window.onload = (function() {	
 	var canvas = document.getElementById("gl");
 	if(!canvas) {
 		canvas = document.createElement("canvas");
@@ -104,32 +132,35 @@ window.onload = (function() {
 	}
 	
 	if(gl) {
+	// make canvas full size 
+		canvas.height = document.documentElement.clientHeight;
+		canvas.width = document.documentElement.clientWidth;
+	// initialize gl size
 		gl.viewportHeight = canvas.height;
 		gl.viewportWidth = canvas.width;
+	// initialize exteriors
 		Object(__WEBPACK_IMPORTED_MODULE_1__engine_core_Extentions__["a" /* initExtentions */])();
 		Object(__WEBPACK_IMPORTED_MODULE_2__engine_core_Tools__["a" /* initTools */])();
-	// start engine	
+	// initialize engine
 		var loop = new __WEBPACK_IMPORTED_MODULE_0__engine_core_Loop__["a" /* Loop */]();
-		for(var i = 0; i < 100; i++) {
+	// start looping
+		(function looping() {
 			loop.update();
-		}
-		loop.stop();
+			requestAnimFrame(looping, canvas);	
+		})();
 	}
+});
+
+window.requestAnimFrame = (function() {
+	return window.requestAnimationFrame || 
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.onRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function(callback, element) {
+		return window.setTimeout(callback, 100 / 60);
+	};
 })();
-
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Vector3f; });
-function Vector3f(x, y, z) {
-	this.x = x;
-	this.y = y;
-	this.z = z;
-} 
 
 
 
@@ -145,6 +176,7 @@ function Vector3f(x, y, z) {
 function Matrix4f() {
 	this.m = [[],[],[],[]];
 	this.setIdentity;
+	var self = this;
 	
 	/**
 	 * Makes current matrix zero.
@@ -374,41 +406,47 @@ function Matrix4f() {
 		}
 		return result;
 	}
-	
+		
 	this.invert = function(src, dest) {
+		if(!dest) {
+			dest = new Matrix4f();
+		}
+		
+		if(!src) {
+			src = self;
+		}
+		
 		var determinant = src.determinant();
 
-		if (!determinant) {
+		if (determinant) {
 			/*
 			 * m00 m01 m02 m03
 			 * m10 m11 m12 m13
 			 * m20 m21 m22 m23
 			 * m30 m31 m32 m33
 			 */
-			if (!dest)
-				dest = new Matrix4f();
 			var determinant_inv = 1 / determinant;
 
 			// first row
-			var t00 =  determinant3x3(src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			var t01 = -determinant3x3(src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			var t02 =  determinant3x3(src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			var t03 = -determinant3x3(src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t00 =  this.determinant3x3(src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t01 = -this.determinant3x3(src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t02 =  this.determinant3x3(src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t03 = -this.determinant3x3(src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// second row
-			var t10 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			var t11 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			var t12 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			var t13 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t10 = -this.determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[2][1], src.m[2][2], src.m[2][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t11 =  this.determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[2][0], src.m[2][2], src.m[2][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t12 = -this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[2][0], src.m[2][1], src.m[2][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t13 =  this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[2][0], src.m[2][1], src.m[2][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// third row
-			var t20 =  determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[3][1], src.m[3][2], src.m[3][3]);
-			var t21 = -determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[3][0], src.m[3][2], src.m[3][3]);
-			var t22 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[3][0], src.m[3][1], src.m[3][3]);
-			var t23 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[3][0], src.m[3][1], src.m[3][2]);
+			var t20 =  this.determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[3][1], src.m[3][2], src.m[3][3]);
+			var t21 = -this.determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[3][0], src.m[3][2], src.m[3][3]);
+			var t22 =  this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[3][0], src.m[3][1], src.m[3][3]);
+			var t23 = -this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[3][0], src.m[3][1], src.m[3][2]);
 			// fourth row
-			var t30 = -determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3]);
-			var t31 =  determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3]);
-			var t32 = -determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3]);
-			var t33 =  determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2]);
+			var t30 = -this.determinant3x3(src.m[0][1], src.m[0][2], src.m[0][3], src.m[1][1], src.m[1][2], src.m[1][3], src.m[2][1], src.m[2][2], src.m[2][3]);
+			var t31 =  this.determinant3x3(src.m[0][0], src.m[0][2], src.m[0][3], src.m[1][0], src.m[1][2], src.m[1][3], src.m[2][0], src.m[2][2], src.m[2][3]);
+			var t32 = -this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][3], src.m[1][0], src.m[1][1], src.m[1][3], src.m[2][0], src.m[2][1], src.m[2][3]);
+			var t33 =  this.determinant3x3(src.m[0][0], src.m[0][1], src.m[0][2], src.m[1][0], src.m[1][1], src.m[1][2], src.m[2][0], src.m[2][1], src.m[2][2]);
 
 			// transpose and divide by the determinant
 			dest.m[0][0] = t00*determinant_inv;
@@ -465,15 +503,7 @@ function Matrix4f() {
 		return f;
 	}
 	
-	this.invert = function(matrix) {
-		return this.invert(matrix, null);
-	}
-	
-	this.invert = function() {
-		return this.invert(this, null);
-	}
-	
-	this.quals = function(m) {
+	this.equals = function(m) {
 		if (this.m[0][0] == m.getM()[0][0] && this.m[0][1] == m.getM()[0][1] &&
 			this.m[0][2] == m.getM()[0][2] && this.m[0][3] == m.getM()[0][3] &&
 			this.m[1][0] == m.getM()[1][0] && this.m[1][1] == m.getM()[1][1] &&
@@ -579,10 +609,55 @@ function Matrix4f() {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Loop; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return buffers; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scene_Scene__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__manager_VAOManager__ = __webpack_require__(35);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__control_Inputs__ = __webpack_require__(36);
+
+
+
+
+
+var buffers = null;
+
+
+/**
+ * Engine loop.
+ * 
+ */
+function Loop() {
+	// initialization	
+	var _renderer = new __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__["a" /* MainRenderer */]();
+	buffers = new __WEBPACK_IMPORTED_MODULE_2__manager_VAOManager__["a" /* VAOManager */]();
+	var _scene = new __WEBPACK_IMPORTED_MODULE_1__scene_Scene__["a" /* Scene */]();
+	var _inputs = new __WEBPACK_IMPORTED_MODULE_3__control_Inputs__["a" /* Inputs */](_scene);
+	
+	// methods
+	this.update = function() {
+		_scene.getCamera().move();
+		_renderer.render(_scene);
+		_inputs.update();
+	}
+	
+	this.stop = function() {
+		_renderer.clean();
+		buffers.clean();
+	}
+};
+
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Maths; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__matrix_Matrix4f__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector_Vector3f__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__index__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__vector_Vector3f__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__index__ = __webpack_require__(1);
 
 
 
@@ -655,76 +730,109 @@ function Maths() {
 
 
 /***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Loop; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return buffers; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__ = __webpack_require__(9);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__scene_Scene__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__manager_VAOManager__ = __webpack_require__(22);
-
-
-
-
-var buffers = null;
-
-
-/**
- * Engine loop.
- * 
- */
-function Loop() {
-	// initialization	
-	var _renderer = new __WEBPACK_IMPORTED_MODULE_0__renderer_MainRenderer__["a" /* MainRenderer */]();
-	buffers = new __WEBPACK_IMPORTED_MODULE_2__manager_VAOManager__["a" /* VAOManager */]();
-	var _scene = new __WEBPACK_IMPORTED_MODULE_1__scene_Scene__["a" /* Scene */]();
-	// methods
-	this.update = function() {
-		_renderer.render(_scene);
-	}
-	
-	this.stop = function() {
-		_renderer.clean();
-		buffers.clean();
-	}
-}
-
-
-
-/***/ }),
 /* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Camera; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__math_matrix_Matrix4f__ = __webpack_require__(2);
 
 
 
 function Camera(name) {
+	const speed = 100;
+	const runSpeed = 400;
+	const turnSpeed = 1;
+	
 	var _name = name;
 	var _position = new __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0); 
-	var _pitch = 20;
+	var _pitch = 0;
 	var _yaw = 0;
 	var _roll = 0;
+	var _target = null;
+	var _targetAngle = 0;
+	var _targetDistance = 0;
+	var _currentTurnSpeed = 0;
+	var _currentPitchSpeed = 0;
+	var _currentForwardSpeed = 0;
+	var _currentStrafeSpeed = 0;
+	
+	var _canRotate = false;
+	var _canMove = true;
+	
+	this.move = function() {
+		var yawAngle = _currentTurnSpeed * 0.6;
+		var pitchAngle = _currentPitchSpeed * 0.6;
+		var forwardDistance = _currentForwardSpeed * 0.6;
+		var strafeDistance = _currentStrafeSpeed * 0.6;
+		
+		this.increaseRotation(0, yawAngle, pitchAngle);
+		
+		var dx = forwardDistance * Math.sin(Math.toRadians(-_yaw)) +
+			strafeDistance * Math.sin(Math.toRadians(-_yaw + 90));
+		var dy = forwardDistance * Math.sin(Math.toRadians(_pitch)) +
+			strafeDistance * Math.cos(Math.toRadians(_pitch + 90));
+		var dz = forwardDistance * Math.cos(Math.toRadians(-_yaw)) +
+			strafeDistance * Math.cos(Math.toRadians(-_yaw + 90));
+		
+		this.increasePosition(dx, dy, dz);
+		
+		_currentTurnSpeed = 0;
+		_currentPitchSpeed = 0;
+		_currentForwardSpeed = 0;
+		_currentStrafeSpeed = 0;
+	}
+	
+	this.addSpeed = function(forward, slide) {
+		if(_canMove) {
+    		if(forward) {
+    			_currentForwardSpeed += speed * forward;
+    		}
+    		if(slide) {
+    			_currentStrafeSpeed += speed * slide;
+    		}
+		}
+	}
+	
+	this.addTurnSpeed = function(turn, pitch) {
+		if(_canRotate) {
+    		if(turn) {
+    			_currentTurnSpeed -= turnSpeed * turn;
+    		}
+    		
+    		if(pitch) {
+    			_currentPitchSpeed -= turnSpeed * pitch;
+    		}
+		}
+	}
+	
+	this.attachTarget = function(target) {
+		_target = target;
+	}
 	
 	this.getViewMatrix = function() {		
 		return Math.createViewMatrix(this);
 	}
 	
-	this.increasePosition = function(x, y, z) {
-		_position.x += x;
-		_position.y += y;
-		_position.z += z;		
+	this.increasePosition = function(dx, dy, dz) {
+		_position.x += dx;
+		_position.y += dy;
+		_position.z += dz;		
 	}
 	
-	this.increaseRotation = function(x, y, z) {
-		_roll += x;
-		_yaw += y;
-		_pitch += z;
+	this.increaseRotation = function(dx, dy, dz) {
+		_roll += dx;
+		_yaw += dy;
+		_pitch += dz;
+	}
+	
+	this.increaseTargetAngle = function(angle) {
+		_targetAngle += angle;
+	}
+	
+	this.increaseTargetDistance = function(distance) {
+		_targetDistance += distance;
 	}
 	
 	this.getName = function(name) {
@@ -746,6 +854,14 @@ function Camera(name) {
 	this.getRoll = function() {
 		return _roll;
 	}
+	
+	this.setCanRotate = function(canRotate) {
+		_canRotate = canRotate;
+	}
+	
+	this.canRotate = function() {
+		return _canRotate;
+	}
 }
 
 
@@ -755,9 +871,36 @@ function Camera(name) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Mesh; });
+/**
+ * Object mesh containing buffer object information.
+ * 
+ * @param name - mesh name
+ * @param vao - vertex array object
+ */
+function Mesh(name, vao) {
+	var _name = name;
+	var _vao = vao;
+	
+	this.getName = function() {
+		return _name;
+	}
+	
+	this.getVAO = function() {
+		return _vao;
+	}
+}
+
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return VAO; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__primitive_VBO__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__primitive_VBO__ = __webpack_require__(24);
 
 
 
@@ -870,26 +1013,119 @@ function VAO() {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Vector2f; });
+function Vector2f(x, y, z) {
+	this.x = x;
+	this.y = y;
+	this.z = z;
+	
+	this.sub = function(leftValue, rightValue) {
+		if(!r) {
+			if(typeof leftVector == "number") {
+				this.x -= leftValue;
+				this.y -= leftValue;
+			} else {
+				this.x -= leftValue.x;
+				this.y -= leftValue.y;	
+			}			
+			
+			return this;
+		} else {
+			return new Vector2f(leftValue.x - rightValue.x, leftValue.y - rightValue.y); 
+		}
+	}
+}
+
+
+
+/***/ }),
+/* 9 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LoaderUtil; });
+/**
+ * Util class for object loader.
+ */
+function LoaderUtil() {
+	
+	this.removeEmptyStrings = function(data) {
+		var result = [];
+		for(var i = 0; i < data.length; i++) {
+			if(!data[i] == "") {
+				result.push(data[i]);
+			}
+		}
+		
+		return result;
+	}
+	
+	this.generateNormalsCW = function(vertices, indices) {
+    	for (var i = 0; i < indices.length; i += 3 ) {
+    		var v0 = vertices[indices[i    ]].getPos();
+    	    var v1 = vertices[indices[i + 1]].getPos();
+    	    var v2 = vertices[indices[i + 2]].getPos();
+    	        
+    	    var normal = v1.sub(v0).cross(v2.sub(v0)).normalize();
+    	        
+    	    vertices[indices[i	  ]].setNormal(vertices[indices[i    ]].getNormal().push(normal));
+    	    vertices[indices[i + 1]].setNormal(vertices[indices[i + 1]].getNormal().push(normal));
+    	    vertices[indices[i + 2]].setNormal(vertices[indices[i + 2]].getNormal().push(normal));
+    	}
+    
+    	for (var i = 0; i < vertices.length; ++i ) {	
+    	    vertices[i].setNormal(vertices[i].getNormal().normalize());
+    	}       
+	}
+	
+	this.generateNormalsCCW = function(vertices, indices)	{
+	    for (var i = 0; i < indices.length; i += 3 ) {
+	    	var v0 = vertices[indices[i    ]].getPos();
+	    	var v1 = vertices[indices[i + 1]].getPos();
+	    	var v2 = vertices[indices[i + 2]].getPos();
+	        
+	    	var normal = v2.sub(v0).cross(v1.sub(v0)).normalize();
+	        
+	        vertices[indices[i	  ]].setNormal(vertices[indices[i    ]].getNormal().push(normal));
+	        vertices[indices[i + 1]].setNormal(vertices[indices[i + 1]].getNormal().push(normal));
+	        vertices[indices[i + 2]].setNormal(vertices[indices[i + 2]].getNormal().push(normal));
+	    }
+
+	    for (var i = 0; i < vertices.length; ++i ) {	
+	    	vertices[i].setNormal(vertices[i].getNormal().normalize());
+	    }       
+	}
+	
+	this.peekLast = function() {
+		return this[this.length - 1];
+	}
+};
+
+
+
+/***/ }),
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_math_testMaths__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__engine_math_testMaths__ = __webpack_require__(11);
 
 
 new __WEBPACK_IMPORTED_MODULE_0__engine_math_testMaths__["a" /* testMath */]();
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return testMath; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__source_engine_math_matrix_Matrix4f__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__source_index__ = __webpack_require__(0);
-
 
 
 
@@ -898,11 +1134,7 @@ function testMath() {
 		// initialize test variables
 		const PI = 3.14;
 		var maths = new __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__["a" /* Maths */](); // object to test
-		jest.mock('./../../source/index');
-		
-		gl = {};
-		gl.viewportWidth = 800;
-		gl.viewportHeight = 600;
+		jest.mock('./../../source/engine/math/Maths');
 		
 		describe('Maths \'toRadiants\' method test', () => {
 			// arguments to test
@@ -921,6 +1153,12 @@ function testMath() {
 		});
 		
 		describe('Maths \'createProjectionMatrix\' method test', () => {
+			var event = new Event("load");
+			beforeEach(() => {
+				window.dispatchEvent(event);
+			});
+			
+			maths = new __WEBPACK_IMPORTED_MODULE_0__source_engine_math_Maths__["a" /* Maths */]();
 			// arguments to test
 			var args = [
 				// nearPlane, farPlane, FOV
@@ -969,13 +1207,13 @@ function testMath() {
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MainRenderer; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__EntityRenderer__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__EntityRenderer__ = __webpack_require__(13);
 
 
 
@@ -991,6 +1229,8 @@ function MainRenderer() {
 	var _projectionMatrix = Math.createProjectionMatrix(NEAR_PLANE, FAR_PLANE, FOV);
 	var _entityRenderer = new __WEBPACK_IMPORTED_MODULE_1__EntityRenderer__["a" /* EntityRenderer */](_projectionMatrix);
 	
+	__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].enable(__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].DEPTH_TEST);
+	
 	// methods
 	/**
 	 * Renders scene objects.
@@ -998,7 +1238,7 @@ function MainRenderer() {
 	 */
 	this.render = function(scene) {
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clearColor(0.0, 1.0, 1.0, 0.5);
-		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clear(__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].COLOR_BUFFER_BIT);
+		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].clear(__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].COLOR_BUFFER_BIT || __WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].DEPTH_BUFFER_BIT);
 		__WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewport(0, 0, __WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewportWidth, __WEBPACK_IMPORTED_MODULE_0__index_js__["a" /* gl */].viewportHeight);
 		_entityRenderer.render(scene);
 	}
@@ -1015,15 +1255,15 @@ function MainRenderer() {
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EntityRenderer; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shader_entityShader_EntityShader__ = __webpack_require__(11);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__shader_entityShader_EntityShader__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__index_js__ = __webpack_require__(1);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_matrix_Matrix4f__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__object_camera_Camera__ = __webpack_require__(5);
 
 
@@ -1052,11 +1292,16 @@ function EntityRenderer(projectionMatrix) {
 	 */
 	this.render = function(scene) {
 		_shader.start();
-		var vao = scene.getEntities().get(0).getModels()[0].getMesh().getVAO();
+		let entity = scene.getEntities().get(0);
+		let model = entity.getModels()[0];
+		let material = model.getMaterial();
+		let vao = model.getMeshes()[0].getVAO();
 		vao.bindAttrib([ 0, 1, 2 ]);
 		_shader.loadViewMatrix(scene.getCamera().getViewMatrix());
 		_shader.loadDiffuseColor(new __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */]( 1, 0, 1 ));
-		__WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].drawElements(__WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].LINES, vao.getIndexBuffer().getSize(), __WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].UNSIGNED_SHORT, 0);
+		_shader.loadLights(scene.getLights());
+		_shader.loadShineVariables(material.getShininess(), material.getReflectivity());
+		__WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].drawElements(__WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].TRIANGLES, vao.getIndexBuffer().getSize(), __WEBPACK_IMPORTED_MODULE_1__index_js__["a" /* gl */].UNSIGNED_SHORT, 0);
 		vao.unbindAttrib([ 0, 1, 2 ]);
 		_shader.stop();
 	}
@@ -1073,21 +1318,25 @@ function EntityRenderer(projectionMatrix) {
 
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EntityShader; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ShaderProgram__ = __webpack_require__(12);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__ShaderProgram__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__ = __webpack_require__(0);
+
 
 
 function EntityShader() {
 	// pre-initialization
 	this.__proto__ = new __WEBPACK_IMPORTED_MODULE_0__ShaderProgram__["a" /* ShaderProgram */]();
 	
+	const MAX_LIGHTS = 10;
+	
 	//----programs
-	const VERTEX_FILE = __webpack_require__(13);
-	const FRAGMENT_FILE = __webpack_require__(14);
+	const VERTEX_FILE = __webpack_require__(16);
+	const FRAGMENT_FILE = __webpack_require__(17);
 	//----attributes
 	const ATTRIBUTE_POSITION = 'in_position';
 	const ATTRIBUTE_TEXTURE_COORDS = 'in_textureCoords';
@@ -1097,8 +1346,15 @@ function EntityShader() {
 	const UNIFORM_RPOJECTION_MATRIX = 'projectionMatrix';
 	const UNIFORM_VIEW_MATRIX = 'viewMatrix';
 	const UNIFORM_MODEL_MATRIX = 'modelMatrix';
+	const UNIFORM_INVERSE_VIEW_MATRIX = 'inverseViewMatrix';
 	// color
 	const UNIFORM_DIFFUSE_COLOR = 'diffuseColor';
+	// light
+	const UNIFORM_LIGHT_POSITION = 'lightPosition';
+	const UNIFORM_LIGHT_COLOR = 'lightColor';
+	const UNIFORM_LIGHT_ATTENUATION = 'lightAttenuation';
+	const UNIFORM_SHININESS = 'shininess';
+	const UNIFORM_REFLECTIVITY = 'reflectivity';
 	
 	// methods
 	// @override
@@ -1114,8 +1370,17 @@ function EntityShader() {
 		this.addUniform(UNIFORM_RPOJECTION_MATRIX);
 		this.addUniform(UNIFORM_VIEW_MATRIX);
 		this.addUniform(UNIFORM_MODEL_MATRIX);
+		this.addUniform(UNIFORM_INVERSE_VIEW_MATRIX);
 		// color
 		this.addUniform(UNIFORM_DIFFUSE_COLOR);
+		// light
+		this.addUniform(UNIFORM_SHININESS);
+		this.addUniform(UNIFORM_REFLECTIVITY);
+		for(let i = 0; i < MAX_LIGHTS; i++) {
+			this.addUniform(UNIFORM_LIGHT_POSITION + "[" + i + "]");
+			this.addUniform(UNIFORM_LIGHT_COLOR + "[" + i + "]");
+			this.addUniform(UNIFORM_LIGHT_ATTENUATION + "[" + i + "]");
+		}
 	}
 	
 	this.loadProjectionMatrix = function(matrix) {
@@ -1124,6 +1389,7 @@ function EntityShader() {
 	
 	this.loadViewMatrix = function(matrix) {
 		this.loadMatrix(UNIFORM_VIEW_MATRIX, matrix);
+		this.loadMatrix(UNIFORM_INVERSE_VIEW_MATRIX, matrix.invert());
 	}
 	
 	this.loadModelMatrix = function(matrix) {
@@ -1132,6 +1398,47 @@ function EntityShader() {
 	
 	this.loadDiffuseColor = function(color) {
 		this.load3DVector(UNIFORM_DIFFUSE_COLOR, color);
+	}
+	
+	this.loadShineVariables = function(shininess, reflectivity) {
+		this.loadFloat(UNIFORM_SHININESS, shininess);
+		this.loadFloat(UNIFORM_REFLECTIVITY, reflectivity);
+	}
+	
+	this.loadLights = function(lights) {
+		for(let i = 0; i < MAX_LIGHTS; i++) {
+			if(i < lights.length()) {
+				this.load3DVector(
+					UNIFORM_LIGHT_POSITION + "[" + i + "]", 
+					lights.get(i).getPosition()
+				);
+				
+				this.load3DVector(
+					UNIFORM_LIGHT_COLOR + "[" + i + "]", 
+					lights.get(i).getColor()
+				);
+				
+				this.load3DVector(
+					UNIFORM_LIGHT_ATTENUATION + "[" + i + "]", 
+					lights.get(i).getAttenuation()
+				);				
+			} else {
+				this.load3DVector(
+					UNIFORM_LIGHT_POSITION + "[" + i + "]", 
+					new __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0)
+				);
+					
+				this.load3DVector(
+					UNIFORM_LIGHT_COLOR + "[" + i + "]", 
+					new __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0)
+				);
+					
+				this.load3DVector(
+					UNIFORM_LIGHT_ATTENUATION + "[" + i + "]", 
+					new __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__["a" /* Vector3f */](1, 0, 0)
+				);
+			}
+		}
 	}
 	
 	// initialization
@@ -1143,12 +1450,12 @@ function EntityShader() {
 
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ShaderProgram; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
 
 
 function ShaderProgram() {
@@ -1293,32 +1600,36 @@ function ShaderProgram() {
 
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports) {
 
-module.exports = "// VETEX SHADER - Entity\r\nattribute vec3 in_position;\r\nattribute vec2 in_textureCoords;\r\nattribute vec3 in_normals;\r\n\r\nuniform mat4 modelMatrix;\r\nuniform mat4 viewMatrix;\r\nuniform mat4 projectionMatrix;\r\n\r\nvoid main(void) {\r\n\t\r\n\tmat4 mvpMatrix = modelMatrix * viewMatrix * projectionMatrix;\r\n\t\r\n\tgl_Position = mvpMatrix * vec4(in_position, 1.0);\r\n}"
+module.exports = "// VETEX SHADER - Entity\r\n#define MAX_LIGHTS 10\r\n// > in <\r\nattribute vec3 in_position;\r\nattribute vec2 in_textureCoords;\r\nattribute vec3 in_normals;\r\n\r\n// > out <\r\nvarying vec3 toLightVector[MAX_LIGHTS];\r\nvarying vec3 toCameraVector;\r\nvarying vec3 surfaceNormal;\r\n\r\n// > uniforms <\r\n// matrices\r\nuniform mat4 modelMatrix;\r\nuniform mat4 viewMatrix;\r\nuniform mat4 projectionMatrix;\r\nuniform mat4 inverseViewMatrix;\r\n\r\n// lights\r\nuniform vec3 lightPosition[MAX_LIGHTS];\r\n// > main <\r\nvoid main(void) {\r\n\t\r\n\tmat4 mvpMatrix = projectionMatrix * viewMatrix;\r\n\tvec4 worldPosition = vec4(in_position, 1.0);\r\n\t\r\n\t// normal\r\n\tsurfaceNormal = in_normals;\r\n\r\n\t// lights\r\n\tfor(int i = 0; i < MAX_LIGHTS; i++) {\r\n\t\ttoLightVector[i] = lightPosition[i] - worldPosition.xyz;\r\n\t}\r\n\r\n\ttoCameraVector = (inverseViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;\r\n\r\n\t// position\r\n\tgl_Position = mvpMatrix * worldPosition;\r\n}\r\n"
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports) {
 
-module.exports = "// FRAGMENT SHADER - Entity\r\n\r\nvoid main(void) {\r\n\t\r\n\tgl_FragColor = vec4(1.0, 0.0, 1.0, 1.0);\r\n\t\r\n}"
+module.exports = "// FRAGMENT SHADER - Entity\r\n#define MAX_LIGHTS 10\r\nprecision mediump float;\r\n\r\n// > in <\r\nvarying vec3 toLightVector[MAX_LIGHTS];\r\nvarying vec3 surfaceNormal;\r\nvarying vec3 toCameraVector;\r\n\r\n// > uniforms <\r\n// lights\r\nuniform vec3 lightColor[MAX_LIGHTS];\r\nuniform vec3 lightAttenuation[MAX_LIGHTS];\r\nuniform float shininess;\r\nuniform float reflectivity;\r\n\r\nvoid main(void) {\r\n\t\r\n\tvec3 unitNormal = normalize(surfaceNormal);\r\n\tvec3 unitVectorToCamera = normalize(toCameraVector);\r\n\r\n\tvec3 totalDiffuse = vec3(0.0);\r\n\tvec3 totalSpecular = vec3(0.0);\r\n\r\n\t// lights influence\r\n\tfor(int i = 0; i < MAX_LIGHTS; i++) {\r\n\t\tfloat distance = length(toLightVector[i]);\r\n\t\tfloat attFactor = lightAttenuation[1].x +\r\n\t\t\t\t(lightAttenuation[i].y * distance) +\r\n\t\t\t\t(lightAttenuation[i].z * distance * distance);\r\n\r\n\t\tvec3 unitLightVector = normalize(toLightVector[i]);\r\n\t\tfloat nDot1 = dot(unitNormal, unitLightVector);\r\n\t\tfloat brightness = max(nDot1, 0.0);\r\n\t\tvec3 lightDirection = -unitLightVector;\r\n\t\tvec3 reflectedLightDirection = reflect(lightDirection, unitNormal);\r\n\t\tfloat specularFactor = dot(reflectedLightDirection, unitVectorToCamera);\r\n\t\tspecularFactor = max(specularFactor, 0.0);\r\n\t\tfloat dampedFactor = pow(specularFactor, shininess);\r\n\t\ttotalDiffuse = totalDiffuse + (brightness * lightColor[i]) / attFactor;\r\n\t\ttotalSpecular = totalSpecular + (dampedFactor * reflectivity * lightColor[i]) / attFactor;\r\n\t}\r\n\r\n\t// fragment color\r\n\tvec4 out_Color = vec4(1.0, 0.0, 0.0, 1.0);\r\n\tout_Color = vec4(totalDiffuse, 1.0) * out_Color + vec4(totalSpecular, 1.0);\r\n\t\r\n\tgl_FragColor = out_Color;\r\n}\r\n"
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Scene; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__object_camera_Camera__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__manager_ObjectManager__ = __webpack_require__(16);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__object_entity_Entity__ = __webpack_require__(17);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__primitive_Model__ = __webpack_require__(18);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__primitive_Mesh__ = __webpack_require__(19);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__primitive_Material__ = __webpack_require__(20);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__math_vector_Vector3f__ = __webpack_require__(1);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__primitive_VAO__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__core_Loop__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__manager_ObjectManager__ = __webpack_require__(19);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__object_entity_Entity__ = __webpack_require__(20);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__object_light_Light__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__primitive_Model__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__primitive_Mesh__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__primitive_Material__ = __webpack_require__(23);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__math_vector_Vector3f__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__primitive_VAO__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__core_Loop__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__loader_objectLoader_OBJLoader__ = __webpack_require__(25);
+
+
 
 
 
@@ -1334,67 +1645,29 @@ module.exports = "// FRAGMENT SHADER - Entity\r\n\r\nvoid main(void) {\r\n\t\r\n
  * 
  */
 function Scene() {
-	var _camera = new __WEBPACK_IMPORTED_MODULE_0__object_camera_Camera__["a" /* Camera */]("MyCamera");	
+	// initialization
+	var _camera = new __WEBPACK_IMPORTED_MODULE_0__object_camera_Camera__["a" /* Camera */]("MyCamera");
+	var _sun = null;
 	var _entities = new __WEBPACK_IMPORTED_MODULE_1__manager_ObjectManager__["a" /* ObjectManager */]();
+	var _lights = new __WEBPACK_IMPORTED_MODULE_1__manager_ObjectManager__["a" /* ObjectManager */]();
 	
-	// entity creation	
-	var vertices = [
-        // face
-        -0.5, -0.5, 0.5,
-        -0.5, 0.5, 0.5,
-         0.5, 0.5, 0.5,
-         0.5, -0.5, 0.5,
-        // back 
-        -0.5, -0.5, -0.5,
-        -0.5, 0.5, -0.5,
-         0.5, 0.5, -0.5,
-         0.5, -0.5, -0.5
-	];
-	
-	var textureCoords = [
-        // face
-         0.0, 0.0,
-         0.5, 0.5,
-         0.5, 0.5,
-         0.5, -0.5,
-        // back 
-        -0.5, -0.5,
-        -0.5, 0.5,
-         0.5, 0.5,
-         0.5, -0.5
-	];
-	
-	var normals = [
-        // face
-         0, 1, 0,
-         0, 1, 0,
-         0, 1, 0,
-         0, 1, 0,
-        // back 
-         0, -1, 0,
-         0, -1, 0,
-         0, -1, 0,
-         0, -1, 0
-	];
-	
-	var indices = [
-		0, 1, 1, 2, 
-		2, 3, 3, 0, 
-		0, 4, 4, 5, 
-		5, 6, 6, 7, 
-		7, 4, 1, 5, 
-		2, 6, 3, 7
-	];
-	
-	var vao = __WEBPACK_IMPORTED_MODULE_8__core_Loop__["b" /* buffers */].createVAO(indices, vertices, textureCoords, normals);
-		
-	var mesh = new __WEBPACK_IMPORTED_MODULE_4__primitive_Mesh__["a" /* Mesh */]("entityMesh", vao);
-	var material = new __WEBPACK_IMPORTED_MODULE_5__primitive_Material__["a" /* Material */]("entityMaterial");
-	var model = new __WEBPACK_IMPORTED_MODULE_3__primitive_Model__["a" /* Model */]("entityModel", mesh, material);	
-	var entity = new __WEBPACK_IMPORTED_MODULE_2__object_entity_Entity__["a" /* Entity */]("entity", model, new __WEBPACK_IMPORTED_MODULE_6__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0));
+	// prepare entities
+	var loader = new __WEBPACK_IMPORTED_MODULE_10__loader_objectLoader_OBJLoader__["a" /* OBJLoader */]();
+	var meshes = loader.load("", "spartan", null);
+	var material = new __WEBPACK_IMPORTED_MODULE_6__primitive_Material__["a" /* Material */]("entityMaterial");
+	var model = new __WEBPACK_IMPORTED_MODULE_4__primitive_Model__["a" /* Model */]("entityModel", meshes, material);
+	var entity = new __WEBPACK_IMPORTED_MODULE_2__object_entity_Entity__["a" /* Entity */]("entity", model, new __WEBPACK_IMPORTED_MODULE_7__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0));
 	
 	_entities.add(entity);
 	
+	// prepare lights
+	var sun = new __WEBPACK_IMPORTED_MODULE_3__object_light_Light__["a" /* Light */](
+			new __WEBPACK_IMPORTED_MODULE_7__math_vector_Vector3f__["a" /* Vector3f */](1000, 5000, 1000), 
+			new __WEBPACK_IMPORTED_MODULE_7__math_vector_Vector3f__["a" /* Vector3f */](1.3, 1.3, 1.3)
+		);
+	
+	_lights.add(sun);
+
 	// methods
 	this.getCamera = function() {
 		return _camera;
@@ -1403,12 +1676,20 @@ function Scene() {
 	this.getEntities = function() {
 		return _entities;
 	}
+	
+	this.getLights = function() {
+		return _lights;
+	}
+	
+	this.getSun = function() {
+		return _sun;
+	}
 }
 
 
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1427,17 +1708,21 @@ function ObjectManager() {
 	this.get = function(index) {
 		return _elements[index];
 	}
+	
+	this.length = function() {
+		return _elements.length;
+	}
 }
 
 
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Entity; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__ = __webpack_require__(0);
 
 
 /**
@@ -1516,7 +1801,55 @@ function Entity(name, model, position) {
 
 
 /***/ }),
-/* 18 */
+/* 21 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Light; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__ = __webpack_require__(0);
+
+
+function Light(position, color, attenuation) {
+	var _position = position || new __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0);
+	var _color = color || new __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__["a" /* Vector3f */](1, 1, 0);  		// yellow
+	var _attenuation = attenuation || new __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector3f__["a" /* Vector3f */](1, 0, 0); 
+	
+	this.getPosition = function() {
+		return _position;
+	}
+		
+	this.setPosition = function(position) {
+		_position = position;
+	}
+	
+	this.increasePosition = function(dx, dy, dz) {
+		_position.x += dx;
+		_position.y += dy;
+		_position.z += dz;
+	}
+
+	this.getColor = function() {
+		return _color;
+	}
+	
+	this.setColor = function(color) {
+		_color = color;
+	}
+	
+	this.getAttenuation = function() {
+		return _attenuation;
+	}
+	
+	this.setAttenuation = function(attenuation) {
+		_attenuation = attenuation;
+	}
+		
+}
+
+
+
+/***/ }),
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1529,13 +1862,13 @@ function Entity(name, model, position) {
  * @param mesh - mesh for current model
  * @param material - material for current model
  */
-function Model(name, mesh, material) {
+function Model(name, meshes, material) {
 	var _name = name;
-	var _mesh = mesh;
+	var _meshes = meshes;
 	var _material = material;
 	
-	this.getMesh = function() {
-		return _mesh;
+	this.getMeshes = function() {
+		return _meshes;
 	}
 	
 	this.getMaterial = function() {
@@ -1546,34 +1879,7 @@ function Model(name, mesh, material) {
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Mesh; });
-/**
- * Object mesh containing buffer object information.
- * 
- * @param name - mesh name
- * @param vao - vertex array object
- */
-function Mesh(name, vao) {
-	var _name = name;
-	var _vao = vao;
-	
-	this.getName = function() {
-		return _name;
-	}
-	
-	this.getVAO = function() {
-		return _vao;
-	}
-}
-
-
-
-/***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1597,23 +1903,127 @@ function Material(name) {
 	var _diffuseColor = null;
 	var _shininess = 1;
 	var _reflectivity = 0;
-	var _reflecriveFactor = 0;
+	var _reflectiveFactor = 0;
 	var _refractiveFactor = 0;
 	var _refractiveIndex = 0;
 	var _emission = 0;
 	
 	var _useFakeLighting = false;
+	
+	this.getDiffuseMap = function() {
+		return _diffuseMap;
+	}
+	
+	this.setDiffuseMap = function(diffuseMap) {
+		_diffuseMap = diffuseMap;
+	}
+	
+	this.getNormalMap = function() {
+		return _normalMap;
+	}
+	
+	this.setNormalMap = function(normalMap) {
+		_normalMap = normalMap;
+	}
+	
+	this.getDisplaceMap = function() {
+		return _displaceMap;
+	}
+	
+	this.setDisplaceMap = function(displaceMap) {
+		_displaceMap = displaceMap;
+	}
+	
+	this.getAmbientMap = function() {
+		return _ambientMap;
+	}
+	
+	this.setAmbientMap = function(ambientMap) {
+		_ambientMap = ambientMap;
+	}
+	
+	this.getSpecularMap = function() {
+		return _specularMap;
+	}
+	
+	this.setSpecularMap = function(specularMap) {
+		_specularMap = specularMap;
+	}
+	
+	this.getAlphaMap = function() {
+		return _alphaMap;
+	}
+	
+	this.seAlphaMap = function(alphaMap) {
+		_alphaMap = alphaMap
+	}
+	
+	this.getDiffuseColor = function() {
+		return _diffuseColor;
+	}
+	
+	this.setDiffuseColor = function(color) {
+		_diffuseColor = diffuseColor;
+	}
+	
+	this.getShininess = function() {
+		return _shininess;
+	}
+	
+	this.setShininess = function(shininess) {
+		_shininess = shininess;
+	}
+	
+	this.getReflectivity = function() {
+		return _reflectivity;
+	}
+	
+	this.setReflectivity = function(reflectivity) {
+		_reflectivity = reflectivity;
+	}
+	
+	this.getReflectiveFactor = function() {
+		return _reflectiveFactor;
+	}
+	
+	this.setReflectiveFactor = function(factor) {
+		_reflectiveFactor = factor;
+	}
+	
+	this.getRefractiveFactor = function()  {
+		return _refractiveFactor;
+	}
+	
+	this.setRefractiveFactor = function(factor) {
+		_refractiveFactor = factor;
+	}
+	
+	this.getRefractiveIndex = function() {
+		return _refractiveIndex;
+	}
+	
+	this.setRefractiveIndex = function(index) {
+		_refractiveIndex = index;
+	}
+	
+	this.getEmission = function() {
+		return _emission;
+	}
+	
+	this.setEmission = function(emission) {
+		_emission = emission;
+	}
 }
 
 
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return VBO; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
 
 
 /**
@@ -1688,12 +2098,1002 @@ function VBO(type) {
 
 
 /***/ }),
-/* 22 */
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OBJLoader; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__core_Loop__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__primitive_Mesh__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__math_vector_Vector2f__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__Vertex__ = __webpack_require__(26);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__Polygon__ = __webpack_require__(27);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__PolygonGroup__ = __webpack_require__(28);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__SmoothingGroup__ = __webpack_require__(29);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__Face__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__MeshObject__ = __webpack_require__(31);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__LoaderUtil__ = __webpack_require__(9);
+
+
+
+
+
+
+
+
+
+
+
+
+// TODO: refactor this
+/**
+ * Model loader for .obj and .mtl files.
+ * 
+ * @param generateTangents - boolean argument to define if 
+ * 							the loader will generate tangents
+ */
+function OBJLoader(generateTangents) {
+	// intializaiton;
+	var _vertices = [];
+	var _normals = [];
+	var _texCoords = [];
+
+	var _objects = [];
+	var _materials = new Map();
+	var _currentSmoothingGroup = 0;
+	var _materialName;
+	
+	var _generateNormals = true;
+	var _genTangents = generateTangents || false;
+	
+
+	_objects.peekLast = new __WEBPACK_IMPORTED_MODULE_10__LoaderUtil__["a" /* LoaderUtil */]().peekLast.bind(_objects);
+	
+	/**
+	 * Loads meshes from folder path, objFile and mtlFile name arguments.
+	 * 
+	 * @param path - files folder path to search file in
+	 * @param objFile - name of .obj file
+	 * @param mtlFile - name of .mtl file 
+	 */
+	this.load = function(path, objFile, mtlFile) {
+		var time = new Date();
+		var util = new __WEBPACK_IMPORTED_MODULE_10__LoaderUtil__["a" /* LoaderUtil */];
+		var request = new XMLHttpRequest();
+		
+		if(mtlFile) {
+			// loading mtl file
+			request.open('GET', './meshes/'+ path + mtlFile + '.mtl', true);
+			request.send(null);
+			// TODO: Dangerous code!
+			while(!request.status == 4) {}
+			var mtl = request.responseText;
+			
+			// parsing .mtl
+			if(!mtl) {
+				try {						
+					let lines = mtl.split["\r\n"];						
+					var currentMtl = "";
+					  
+					for(var i = 0; i < lines.length; i++) {
+						let tokens = lines[i].split(" ");
+						tokens = util.removeEmptyStrings(tokens);
+						
+						if(!tokens.length) {
+							continue;
+						}
+						
+						if(tokens[0] == "newmtl") {
+							let material = new Material(tokens[1]);
+							materials.set(tokens[1], material);
+							currentMtl = tokens[1];
+						}
+						
+						if(tokens[0] == "Kd") {
+							if(tokens.length > 1) {
+								let color = new __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */](+tokens[1], +tokens[2], +tokens[3]);
+								materials.get(currentMtl).setColor(color);
+							}
+						}
+						
+						if(tokens[0] == "map_Kd") {
+							if(tokens.length > 1){
+								materials.get(currentMtl).setDiffuseMap(new Texture2D("diffuseMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "map_Ks") {
+							if(tokens.length > 1){
+								materials.get(currentMtl).setSpecularMap(new Texture2D("specularMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "map_bump") {
+							if(tokens.length > 1) {
+								materials.get(currentMtl).setNormalMap(new Texture2D("normalMap", path + "/" + tokens[1]));
+							}
+						}
+						
+						if(tokens[0] == "illum") {
+							if(tokens.length > 1)
+								materials.get(currentMtl).setEmission(Float.valueOf(tokens[1]));
+						}
+						
+						if(tokens[0] == "Ns") {
+							if(tokens.length > 1)
+								materials.get(currentMtl).setShininess(Float.valueOf(tokens[1]));
+						}
+					}
+					
+					mtlReader.close();
+				} catch(error) {
+					console.log(error.stack);
+				}
+			}
+		}
+		
+		// loading .obj file
+		try {
+			__webpack_require__(32)("./"+ path + objFile + '.obj');
+			request.open('GET', './meshes/'+ path + objFile + '.obj', false);
+			request.send(null);
+			// TODO: Dangerous code!
+			while(!request.status == 4) {}
+			
+			if(!request.status == 200) {
+				throw "obj loading failed!";
+			}
+			var obj = request.responseText;
+			
+			// parsing obj
+			if(!obj) {
+				throw "obj file is empty!";
+			}
+			let lines = obj.split("\r\n");		
+			
+			for(let i = 0; i < lines.length; i++) {
+				let tokens = lines[i].split(" ");
+				tokens = util.removeEmptyStrings(tokens);
+				
+				if(!tokens.length || tokens[0] == "#") {
+					continue;
+				}
+				
+				if(tokens[0] == "v") {
+					_vertices.push(
+						new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](
+							new __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */](+tokens[1], +tokens[2], +tokens[3])
+						)
+					);
+				}
+				
+				if(tokens[0] == "vn") {
+					_normals.push(
+						new __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */](+tokens[1], +tokens[2], +tokens[3])
+					);
+				}
+				
+				if(tokens[0] ==  "vt") {
+					_texCoords.push(
+						new __WEBPACK_IMPORTED_MODULE_2__math_vector_Vector2f__["a" /* Vector2f */](+tokens[1], +tokens[2])
+					);
+				}
+				
+				if(tokens[0] == "o") {
+					let object = new __WEBPACK_IMPORTED_MODULE_9__MeshObject__["a" /* MeshObject */]();
+					object.setName(tokens[1]);
+					_objects.push(new __WEBPACK_IMPORTED_MODULE_9__MeshObject__["a" /* MeshObject */]());
+				}
+				
+				if(tokens[0] == "g") {
+					let polygonGroup = new __WEBPACK_IMPORTED_MODULE_6__PolygonGroup__["a" /* PolygonGroup */]();	
+					if (tokens.length > 1) {
+						polygonGroup.setName(tokens[1]);
+					}
+					
+					if (_objects.length == 0) {
+						_objects.push(new __WEBPACK_IMPORTED_MODULE_9__MeshObject__["a" /* MeshObject */]());
+					}
+					_objects.peekLast().getPolygonGroups().push(polygonGroup);
+				}
+				
+				if(tokens[0] == "usemtl") {
+					let polygon = new __WEBPACK_IMPORTED_MODULE_5__Polygon__["a" /* Polygon */]();
+					_materialName = tokens[1];
+					polygon.setMaterial(tokens[1]);
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new __WEBPACK_IMPORTED_MODULE_6__PolygonGroup__["a" /* PolygonGroup */]());
+					}
+					_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(polygon);
+				}
+				
+				if(tokens[0] == "s") {
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new __WEBPACK_IMPORTED_MODULE_6__PolygonGroup__["a" /* PolygonGroup */]());
+					}
+					
+					if(tokens[1] == "off" || tokens[1] == "0") {
+						_currentSmoothingGroup = 0;
+						
+						if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(0)) {
+							_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new __WEBPACK_IMPORTED_MODULE_7__SmoothingGroup__["a" /* SmoothingGroup */]());
+						}
+					} else {
+						_currentSmoothingGroup = +tokens[1];
+						if(!_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().has(_currentSmoothingGroup)) {
+							_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new __WEBPACK_IMPORTED_MODULE_7__SmoothingGroup__["a" /* SmoothingGroup */]());
+						}
+					}
+				}
+				
+				if(tokens[0] == "f") {
+					if(_objects.peekLast().getPolygonGroups().length == 0) {
+						_objects.peekLast().getPolygonGroups().push(new __WEBPACK_IMPORTED_MODULE_6__PolygonGroup__["a" /* PolygonGroup */]());
+					}
+					
+					if(_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().length == 0) {
+						_currentSmoothingGroup = 1;
+						_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().set(_currentSmoothingGroup, new __WEBPACK_IMPORTED_MODULE_7__SmoothingGroup__["a" /* SmoothingGroup */]());
+					}
+					
+					if(_objects.peekLast().getPolygonGroups().peekLast().getPolygons().length == 0) {
+						_objects.peekLast().getPolygonGroups().peekLast().getPolygons().push(new __WEBPACK_IMPORTED_MODULE_5__Polygon__["a" /* Polygon */]());
+					}
+	
+					if(tokens.length == 4) {
+						parseTriangleFace(tokens);
+					}
+					
+					if(tokens.length == 5) {
+						parseQuadFace(tokens);
+					}
+				}
+				
+			}
+		} catch(error) {
+			console.log( err.stack );
+		}
+		
+		if(_normals.length == 0 && _generateNormals) {
+			for(let i = 0; i < _objects.length; i++) {
+				let polygonGroups = _object[i].getPolygonGroups();
+				for(let j = 0; j < polygonGroups.length; j++) {
+					let keys = polygonGroups[j].keys();
+					for(let k = 0; k < keys.length; k++) {
+						let key = keys[k];
+						if(frontface == Frontface.CW) {
+							util.generateNormalsCW(polygonGroups[j].getSmoothingGroups().get(key));
+						} else {
+							util.generateNormalsCCW(polygonGroups[j].getSmoothingGroups().get(key));
+						}
+					}
+				}
+			}
+		}
+			
+		var meshes = [];
+		
+		for(let i = 0; i < _objects.length; i++) {
+			let polygonGroups = _objects[i].getPolygonGroups();
+			for(let j = 0; j < polygonGroups.length; j++) {
+				let polygons = polygonGroups[j].getPolygons();
+				for(let k = 0; k < polygons.length; k++) {
+					generatePolygon(polygonGroups[j].getSmoothingGroups(), polygons[k]);
+					let vao = convert(polygons[k]);
+					meshes.push(new __WEBPACK_IMPORTED_MODULE_1__primitive_Mesh__["a" /* Mesh */]("mesh" + k, vao));
+				}
+			}
+		}
+		
+		return meshes;
+	}
+	
+	var parseTriangleFace = function(tokens) {
+		// vertex//normal
+		if(tokens[1].includes("//")) {
+			let vertexIndices = [
+				+tokens[1].split("//")[0] - 1,
+				+tokens[2].split("//")[0] - 1,
+				+tokens[3].split("//")[0] - 1
+			];
+			
+			let normalIndices = [
+				+tokens[1].split("//")[1] - 1,
+				+tokens[2].split("//")[1] - 1,
+				+tokens[3].split("//")[1] - 1
+			];
+			
+			let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+			let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+			let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+			v0.setNormal(_normals[normalIndices[0]]);
+			v1.setNormal(_normals[normalIndices[1]]);
+			v2.setNormal(_normals[normalIndices[2]]);
+			
+			if(_genTangents) {
+				generateTangents(v0, v1, v2);
+			}
+			
+			addToSmoothingGroup(
+				_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+				v0, v1, v2
+			);
+			
+		} else if(tokens[1].includes("/")) {				// vertex/textureCoord/normal
+			
+			if(tokens[1].split("/").length == 3) {
+				let vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1
+				];
+				
+				let texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1
+				];
+				
+				let normalIndices = [
+					+tokens[1].split("/")[2] - 1,
+					+tokens[2].split("/")[2] - 1,
+					+tokens[3].split("/")[2] - 1
+				];
+				
+				let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+				let v1 =  new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+				let v2 =  new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+				v0.setNormal(_normals[normalIndices[0]]);
+				v1.setNormal(_normals[normalIndices[1]]);
+				v2.setNormal(_normals[normalIndices[2]]);
+				v0.setTextureCoord(_texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(_texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(_texCoords[texCoordIndices[2]]);
+				
+				if(_genTangents) {
+					generateTangents(v0, v1, v2);
+				}
+				
+				addToSmoothingGroup(
+					_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+					v0, v1, v2
+				);
+			
+			} else {									// vertex/textureCoord
+				let vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1
+				];
+				
+				let texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1
+				];
+				
+				let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+				let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+				let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+				v0.setTextureCoord(_texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(_texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(_texCoords[texCoordIndices[2]]);
+				
+				if(_genTangents) {
+					generateTangents(v0, v1, v2);
+				}				
+				
+				addToSmoothingGroup(
+					_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+					v0, v1, v2
+				);
+			}		
+		} else {									// vertex
+			
+			let vertexIndices = [
+				+tokens[1] - 1,
+				+tokens[2] - 1,
+				+tokens[3] - 1
+			];
+			
+			let v0 = _vertices[vertexIndices[0]];
+			let v1 = _vertices[vertexIndices[1]];
+			let v2 = _vertices[vertexIndices[2]];
+			
+			if(_genTangents) {
+				generateTangents(v0, v1, v2);
+			}
+			
+			addToSmoothingGroup(
+				_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+				v0, v1, v2
+			);
+		}
+	}
+	
+	var parseQuadFace = function(tokens) {
+		// vertex//normal
+		if(tokens[1].includes("//")) {
+			
+			let vertexIndices = [
+				+tokens[1].split("//")[0] - 1,
+				+tokens[2].split("//")[0] - 1,
+				+tokens[3].split("//")[0] - 1,
+				+tokens[4].split("//")[0] - 1
+			];
+			
+			let normalIndices = [
+				+tokens[1].split("//")[1] - 1,
+				+tokens[2].split("//")[1] - 1,
+				+tokens[3].split("//")[1] - 1,
+				+tokens[4].split("//")[1] - 1
+			];
+			
+			let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+			let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+			let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+			let v3 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[3]].getPosition());
+			v0.setNormal(_normals[normalIndices[0]]);
+			v1.setNormal(_normals[normalIndices[1]]);
+			v2.setNormal(_normals[normalIndices[2]]);
+			v3.setNormal(_normals[normalIndices[3]]);
+			
+			if(_genTangents) {
+				generateTangents(v0, v1, v2);
+				generateTangents(v2, v1, v3);
+			}			
+			addToSmoothingGroup(
+				_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+				v0, v1, v2, v3
+			);
+		}
+		
+		else if(tokens[1].includes("/")) {	
+		
+			// vertex/textureCoord/normal
+			if(tokens[1].split("/").length == 3) {
+
+				let vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1,
+					+tokens[4].split("/")[0] - 1
+				];
+				
+				let texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1,
+					+tokens[4].split("/")[1] - 1
+				];
+				
+				let normalIndices = [
+					+tokens[1].split("/")[2] - 1,
+					+tokens[2].split("/")[2] - 1,
+					+tokens[3].split("/")[2] - 1,
+					+tokens[4].split("/")[2] - 1
+				];
+				
+				let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+				let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+				let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+				let v3 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[3]].getPosition());
+				v0.setNormal(_normals[normalIndices[0]]);
+				v1.setNormal(_normals[normalIndices[1]]);
+				v2.setNormal(_normals[normalIndices[2]]);
+				v3.setNormal(_normals[normalIndices[3]]);			
+				v0.setTextureCoord(_texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(_texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(_texCoords[texCoordIndices[2]]);
+				v3.setTextureCoord(_texCoords[texCoordIndices[3]]);
+				
+				if(_genTangents) {
+					generateTangents(v0, v1, v2);
+					generateTangents(v2, v1, v3);
+				}
+				
+				addToSmoothingGroup(
+					_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+					v0, v1, v2, v3
+				);
+			}
+			
+			// vertex/textureCoord
+			else {
+
+				let vertexIndices = [
+					+tokens[1].split("/")[0] - 1,
+					+tokens[2].split("/")[0] - 1,
+					+tokens[3].split("/")[0] - 1,
+					+tokens[4].split("/")[0] - 1
+				];
+				
+				let texCoordIndices =  [
+					+tokens[1].split("/")[1] - 1,
+					+tokens[2].split("/")[1] - 1,
+					+tokens[3].split("/")[1] - 1,
+					+tokens[4].split("/")[1] - 1
+				];
+				
+				let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+				let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+				let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+				let v3 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[3]].getPosition());
+				v0.setTextureCoord(_texCoords[texCoordIndices[0]]);
+				v1.setTextureCoord(_texCoords[texCoordIndices[1]]);
+				v2.setTextureCoord(_texCoords[texCoordIndices[2]]);
+				v3.setTextureCoord(_texCoords[texCoordIndices[3]]);
+				
+				if(_genTangents) {
+					generateTangents(v0, v1, v2);
+					generateTangents(v2, v1, v3);
+				}
+				
+				addToSmoothingGroup(
+					_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+					v0, v1, v2, v3
+				);
+			}		
+		}
+	
+		// vertex
+		else {
+			
+			let vertexIndices = [
+				+tokens[1] - 1,
+				+tokens[2] - 1,
+				+tokens[3] - 1,
+				+tokens[4] - 1
+			];
+			
+			let v0 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[0]].getPosition());
+			let v1 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[1]].getPosition());
+			let v2 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[2]].getPosition());
+			let v3 = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */](_vertices[vertexIndices[3]].getPosition());
+			if(_genTangents) {
+				generateTangents(v0, v1, v2);
+				generateTangents(v2, v1, v3);
+			}
+			
+			addToSmoothingGroup(
+				_objects.peekLast().getPolygonGroups().peekLast().getSmoothingGroups().get(_currentSmoothingGroup),
+				v0, v1, v2, v3
+			);
+		}
+	}
+	
+	var addToSmoothingGroup = function(smoothingGroup, v0, v1, v2, v3) {
+		let index0 = processVertex(smoothingGroup, v0);
+		let index1 = processVertex(smoothingGroup, v1);
+		let index2 = processVertex(smoothingGroup, v2);
+		
+		let face0 = new __WEBPACK_IMPORTED_MODULE_8__Face__["a" /* Face */]();
+		face0.getIndices()[0] = index0;
+		face0.getIndices()[1] = index1;
+		face0.getIndices()[2] = index2;
+		face0.setMaterial(_materialName);
+		smoothingGroup.getFaces().push(face0);
+		// if v3 defined - add new face
+		if(v3) {
+			let index3 = processVertex(smoothingGroup, v3);
+			
+			let face1 = new __WEBPACK_IMPORTED_MODULE_8__Face__["a" /* Face */]();
+			face1.getIndices()[0] = index0;
+			face1.getIndices()[1] = index2;
+			face1.getIndices()[2] = index3;
+			face1.setMaterial(_materialName);
+			
+			smoothingGroup.getFaces().push(face1);
+		}
+
+	}
+	
+	let processVertex = function(smoothingGroup, previousVertex) {
+		if(smoothingGroup.getVertices().includes(previousVertex)) {
+			let index = smoothingGroup.getVertices().indexOf(previousVertex);
+			let nextVertex = smoothingGroup.getVertices()[index];
+			if(!hasSameNormalAndTexture(previousVertex, nextVertex)) {		
+				if(nextVertex.getDublicateVertex() != null) {
+					return processVertex(smoothingGroup, nextVertex.getDublicateVertex());
+				} else {
+					let newVertex = new __WEBPACK_IMPORTED_MODULE_4__Vertex__["a" /* Vertex */]();
+					newVertex.setPos(previousVertex.getPosition());
+					newVertex.setNormal(previousVertex.getNormal());
+					newVertex.setTextureCoord(previousVertex.getTextureCoord());
+					previousVertex.setDubilcateVertex(newVertex);
+					smoothingGroup.getVertices().push(newVertex);
+					return smoothingGroup.getVertices().indexOf(newVertex);
+				}
+			}
+		}
+		smoothingGroup.getVertices().push(previousVertex);
+		return smoothingGroup.getVertices().indexOf(previousVertex);
+	}
+	
+	var hasSameNormalAndTexture = function(v1, v2) {
+		return (v1.getNormal().equals(v2.getNormal()) && v1.getTextureCoord().equals(v2.getTextureCoord()));
+	}
+	
+	var generatePolygon = function(smoothingGroups, polygon) {
+		for(let key of smoothingGroups.keys()) {
+			for(let face of smoothingGroups.get(key).getFaces()) {
+				if(face.getMaterial() == polygon.getMaterial()) {
+					if(!polygon.getVertices().includes(smoothingGroups.get(key).getVertices()[face.getIndices()[0]])) {
+						polygon.getVertices().push(smoothingGroups.get(key).getVertices()[face.getIndices()[0]]);						
+					}
+					
+					if(!polygon.getVertices().includes(smoothingGroups.get(key).getVertices()[face.getIndices()[1]])) {
+						polygon.getVertices().push(smoothingGroups.get(key).getVertices()[face.getIndices()[1]]);
+					}
+					
+					if(!polygon.getVertices().includes(smoothingGroups.get(key).getVertices()[face.getIndices()[2]])) {
+						polygon.getVertices().push(smoothingGroups.get(key).getVertices()[face.getIndices()[2]]);
+					}
+					
+					polygon.getIndices().push(polygon.getVertices().indexOf(smoothingGroups.get(key).getVertices()[face.getIndices()[0]]));
+					polygon.getIndices().push(polygon.getVertices().indexOf(smoothingGroups.get(key).getVertices()[face.getIndices()[1]]));
+					polygon.getIndices().push(polygon.getVertices().indexOf(smoothingGroups.get(key).getVertices()[face.getIndices()[2]]));
+				}
+			}
+		}
+	}
+	
+	var generateTangents = function(v0, v1, v2) {
+		let delatPos1 = __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */].sub(v1.getPosition(), v0.getPosition());
+		let delatPos2 = __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */].sub(v2.getPosition(), v0.getPosition());
+		let uv0 = v0.getTextureCoord();
+		let uv1 = v1.getTextureCoord();
+		let uv2 = v2.getTextureCoord();
+		let deltaUv1 = __WEBPACK_IMPORTED_MODULE_2__math_vector_Vector2f__["a" /* Vector2f */].sub(uv1, uv0);
+		let deltaUv2 = __WEBPACK_IMPORTED_MODULE_2__math_vector_Vector2f__["a" /* Vector2f */].sub(uv2, uv0);
+
+		let r = 1.0 / (deltaUv1.x * deltaUv2.y - deltaUv1.y * deltaUv2.x);
+		delatPos1.scale(deltaUv2.y);
+		delatPos2.scale(deltaUv1.y);
+		let tangent = __WEBPACK_IMPORTED_MODULE_3__math_vector_Vector3f__["a" /* Vector3f */].sub(delatPos1, delatPos2);
+		tangent.scale(r);
+		v0.setTangent(tangent);
+		v1.setTangent(tangent);
+		v2.setTangent(tangent);
+	}
+	
+	var convert = function(polygon) {
+		let indices = polygon.getIndices().slice();
+		let vertices = polygon.getVertices().slice();
+		let positions = [];
+		let normals = [];
+		let textureCoords = [];
+		
+		for(let i = 0; i < vertices.length; i++) {
+			positions.push(vertices[i].getPosition().x);
+			positions.push(vertices[i].getPosition().y);
+			positions.push(vertices[i].getPosition().z);
+		}
+		
+		for(let i = 0; i < vertices.length; i++) {
+			normals.push(vertices[i].getNormal().x);
+			normals.push(vertices[i].getNormal().y);
+			normals.push(vertices[i].getNormal().z);
+		}
+		
+		for(let i = 0; i < vertices.length; i++) {
+			textureCoords.push(vertices[i].getTextureCoord().x);
+			textureCoords.push(1 - vertices[i].getTextureCoord().y);
+		}
+		
+		let tangents = null;
+		
+		let vao = null;
+		
+		if(_genTangents) {
+			tangents = vertices.forEach((vertex, index, arr) => {
+				arr.splice(index, 1, vertex.getTangent().x, vertex.getTangent().y, vertex.getTangent().z);
+			});
+			
+			vao = __WEBPACK_IMPORTED_MODULE_0__core_Loop__["b" /* buffers */].createVAO(indices, positions, textureCoords, normals, tangents);
+		} else {
+			vao = __WEBPACK_IMPORTED_MODULE_0__core_Loop__["b" /* buffers */].createVAO(indices, positions, textureCoords, normals);	
+		}
+		
+		return vao;
+	}
+	
+	this.clean = function() {
+		_vertices.length = 0;
+		_normals.length = 0;
+		_texCoords.length = 0;
+	}
+}
+
+
+
+/***/ }),
+/* 26 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Vertex; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector2f__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__ = __webpack_require__(0);
+
+
+
+function Vertex(position, texture) {	
+	var _position = position;
+	var _normal = new __WEBPACK_IMPORTED_MODULE_1__math_vector_Vector3f__["a" /* Vector3f */](0, 0, 0);
+	var _textureCoord = texture || new __WEBPACK_IMPORTED_MODULE_0__math_vector_Vector2f__["a" /* Vector2f */](0, 0);
+	var _tangent = null;
+	var _bitangent = null;
+	var _dublicateVertex = null;
+
+	this.getPosition = function() {
+		return _position;
+	}
+
+	this.setPosition = function(position) {
+		_position = position;
+	}
+
+	this.getTextureCoord = function() {
+		return _textureCoord;
+	}
+
+	this.setTextureCoord = function(textureCoord) {
+		_textureCoord = textureCoord;
+	}
+
+
+	this.getNormal = function() {
+		return _normal;
+	}
+
+	this.setNormal = function(normal) {
+		_normal = normal;
+	}
+	
+	this.setDubilcateVertex = function(vertex) {
+		_dublicateVertex = vertex;
+	}
+	
+	this.getDublicateVertex = function() {
+		return _dublicateVertex;
+	}
+
+	this.getTangent = function() {
+		return _tangent;
+	}
+
+	this.setTangent = function(tangent) {
+		_tangent = tangent;
+	}
+
+	this.getBitangent = function() {
+		return _bitangent;
+	}
+
+	this.setBitangent = function(bitangent) {
+		_bitangent = bitangent;
+	}
+	
+}
+
+
+
+/***/ }),
+/* 27 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Polygon; });
+function Polygon() {
+	
+	var _material;
+	var _vertices = [];
+	var _indices = [];
+	
+	this.getMaterial = function() {
+		return _material;
+	}
+	
+	this.setMaterial = function(material) {
+		_material = material;
+	}
+	
+	this.getVertices = function() {
+		return _vertices;
+	}
+	
+	this.setVertices = function(vertices) {
+		_vertices = vertices.slice();
+	}
+	
+	this.getIndices = function() {
+		return _indices;
+	}
+	
+	this.setIndices = function(indices) {
+		_indices = indices;
+	}
+}
+
+
+
+/***/ }),
+/* 28 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PolygonGroup; });
+function PolygonGroup() {
+	var _polygons = [];
+	var _smoothingGroups = new Map();
+	var _name = "";
+	
+	this.getPolygons = function() {
+		return _polygons;
+	}
+	
+	this.setPolygons = function(polygons) {
+		_polygons = polygons;
+	}
+	
+	this.getName = function() {
+		return _name;
+	}
+	
+	this.setName = function(name) {
+		_name = name;
+	}
+	
+	this.getSmoothingGroups = function() {
+		return _smoothingGroups;
+	}
+	
+	this.setSmoothingGroups = function(smoothingGroups) {
+		_smoothingGroups = smoothingGroups;
+	}
+}
+
+
+
+/***/ }),
+/* 29 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SmoothingGroup; });
+function SmoothingGroup() {
+	var _faces = [];
+	var _vertices = [];
+	
+	this.getVertices = function() {
+		return _vertices;
+	}
+	
+	this.setVertices = function() {
+		_vertices = vertices;
+	}
+	
+	this.getFaces = function() {
+		return _faces;
+	}
+	
+	this.setFaces = function() {
+		_faces = faces;
+	}
+}
+
+
+
+/***/ }),
+/* 30 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Face; });
+function Face() {
+
+	var _indices = [];
+	var _material;
+
+	this.getIndices = function() {
+		return _indices;
+	}
+
+	this.setIndices = function(indices) {
+		_indices = indices;
+	}
+
+	this.getMaterial = function() {
+		return _material;
+	}
+
+	this.setMaterial = function(material) {
+		_material = material;
+	}
+}
+
+
+
+/***/ }),
+/* 31 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MeshObject; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__LoaderUtil__ = __webpack_require__(9);
+
+
+function MeshObject() {
+	var _polygonGroups = [];
+	var _name = "";
+	
+	// bind properties
+	_polygonGroups.peekLast = new __WEBPACK_IMPORTED_MODULE_0__LoaderUtil__["a" /* LoaderUtil */]().peekLast.bind(_polygonGroups);
+	
+	this.getPolygonGroups = function() {
+		return _polygonGroups;
+	}
+	
+	this.setPolygonGroups = function(polygonGroups) {
+		_polygonGroups = polygonGroups;
+	}
+	
+	this.getName = function() {
+		return _name;
+	}
+	
+	this.setName = function(name) {
+		_name = name;
+	}
+}
+
+
+
+/***/ }),
+/* 32 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./cube.obj": 33,
+	"./spartan.obj": 34
+};
+function webpackContext(req) {
+	return __webpack_require__(webpackContextResolve(req));
+};
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) // check for number or string
+		throw new Error("Cannot find module '" + req + "'.");
+	return id;
+};
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 32;
+
+/***/ }),
+/* 33 */
+/***/ (function(module, exports) {
+
+throw new Error("Module parse failed: Unexpected character '#' (1:0)\nYou may need an appropriate loader to handle this file type.\n| # Blender v2.77 (sub 0) OBJ File: ''\r\n| # www.blender.org\r\n| mtllib cube.mtl\r");
+
+/***/ }),
+/* 34 */
+/***/ (function(module, exports) {
+
+throw new Error("Module parse failed: Unexpected character '#' (1:0)\nYou may need an appropriate loader to handle this file type.\n| # 3ds Max Wavefront OBJ Exporter v0.94b - (c)2007 guruware\r\n| # File Created: 15.01.2017 14:00:40\r\n| \r");
+
+/***/ }),
+/* 35 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return VAOManager; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__primitive_VAO__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__primitive_VAO__ = __webpack_require__(7);
 
 
 function VAOManager() {
@@ -1710,6 +3110,7 @@ function VAOManager() {
 		if(textures) {
 			vao.createAttribute(1, 2, textures);
 		}
+		
 		if(normals) {
 			vao.createAttribute(2, 3, normals);
 		}
@@ -1732,12 +3133,118 @@ function VAOManager() {
 
 
 /***/ }),
-/* 23 */
+/* 36 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Inputs; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__Mouse__ = __webpack_require__(37);
+ 
+
+function Inputs(scene) {
+	var _scene = scene;
+	var _camera = scene.getCamera();
+	var _mouse = new __WEBPACK_IMPORTED_MODULE_0__Mouse__["a" /* Mouse */](400, 300);
+	
+	// camera move
+	const moveSpeed = 0.1;
+	
+	var move = function(event) {
+		if(event.keyCode == 65) { // a
+			_camera.addSpeed(0, -moveSpeed);
+		}
+		
+		if(event.keyCode == 68) { // d
+			_camera.addSpeed(0, moveSpeed)
+		}
+		
+		if(event.keyCode == 87) { // w
+			_camera.addSpeed(-moveSpeed);
+		}
+		
+		if(event.keyCode == 83) { // s
+			_camera.addSpeed(moveSpeed);
+		}
+		
+		if(event.keyCode == 32) { // space
+			_camera.increasePosition(0, 5, 0);
+		}
+		
+		if(event.keyCode == 67) { // c
+			_camera.increasePosition(0, -5, 0);
+		}
+	};
+	
+	var activateCamRotation = function() {
+		_camera.setCanRotate(true);
+	};
+	
+	var deactivateCamRotation = function() {
+		_camera.setCanRotate(false);
+	}
+	
+	document.addEventListener("keydown", move);
+	document.addEventListener("mousedown", activateCamRotation);
+	document.addEventListener("mouseup", deactivateCamRotation);
+	
+	this.update = function() {
+		_camera.addTurnSpeed(_mouse.getDX(), _mouse.getDY());
+		_mouse.update();
+	}
+	
+	this.getMouse = function() {
+		return _mouse;
+	}
+}
+
+
+
+/***/ }),
+/* 37 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Mouse; });
+function Mouse(widthCenter, heightCenter) {
+	
+	var _x = widthCenter  || 0;
+	var _y = heightCenter || 0;
+	var _dX = 0;
+	var _dY = 0;
+	
+	this.update = function() {
+		_dX = 0;
+		_dY = 0;
+	}
+	
+	var moveUpdate = function(event) {
+		_dX = _x - event.clientX;
+		_dY = _y - event.clientY;
+		_x = event.clientX;
+		_y = event.clientY;
+	}
+	
+	this.getDX = function() {
+		return _dX;
+	}
+	
+	this.getDY = function() {
+		return _dY;
+	}
+	
+	document.addEventListener("mousemove", moveUpdate);
+	
+};
+
+
+
+/***/ }),
+/* 38 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return initExtentions; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__index_js__ = __webpack_require__(1);
 
 
 function initExtentions() {
@@ -1767,12 +3274,12 @@ function applyExtention(name) {
 
 
 /***/ }),
-/* 24 */
+/* 39 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return initTools; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_Maths__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__math_Maths__ = __webpack_require__(4);
 
 
 function initTools() {

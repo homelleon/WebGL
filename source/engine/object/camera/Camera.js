@@ -19,6 +19,9 @@ function Camera(name) {
 	var _currentForwardSpeed = 0;
 	var _currentStrafeSpeed = 0;
 	
+	var _canRotate = false;
+	var _canMove = true;
+	
 	this.move = function() {
 		var yawAngle = _currentTurnSpeed * 0.6;
 		var pitchAngle = _currentPitchSpeed * 0.6;
@@ -43,21 +46,25 @@ function Camera(name) {
 	}
 	
 	this.addSpeed = function(forward, slide) {
-		if(forward) {
-			_currentForwardSpeed += speed * forward;
-		}
-		if(slide) {
-			_currentStrafeSpeed += speed * slide;
+		if(_canMove) {
+    		if(forward) {
+    			_currentForwardSpeed += speed * forward;
+    		}
+    		if(slide) {
+    			_currentStrafeSpeed += speed * slide;
+    		}
 		}
 	}
 	
 	this.addTurnSpeed = function(turn, pitch) {
-		if(turn) {
-			_currentTurnSpeed -= turnSpeed * turn;
-		}
-		
-		if(pitch) {
-			_currentPitchSpeed -= turnSpeed * pitch;
+		if(_canRotate) {
+    		if(turn) {
+    			_currentTurnSpeed -= turnSpeed * turn;
+    		}
+    		
+    		if(pitch) {
+    			_currentPitchSpeed -= turnSpeed * pitch;
+    		}
 		}
 	}
 	
@@ -107,6 +114,14 @@ function Camera(name) {
 	
 	this.getRoll = function() {
 		return _roll;
+	}
+	
+	this.setCanRotate = function(canRotate) {
+		_canRotate = canRotate;
+	}
+	
+	this.canRotate = function() {
+		return _canRotate;
 	}
 }
 

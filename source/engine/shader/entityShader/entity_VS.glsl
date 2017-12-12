@@ -9,6 +9,7 @@ attribute vec3 in_normals;
 varying vec3 toLightVector[MAX_LIGHTS];
 varying vec3 toCameraVector;
 varying vec3 surfaceNormal;
+varying vec2 textureCoords;
 
 // > uniforms <
 // matrices
@@ -34,7 +35,10 @@ void main(void) {
 	}
 
 	toCameraVector = (inverseViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz - worldPosition.xyz;
-
+	
+	// coords
+	textureCoords = in_textureCoords;
+	
 	// position
 	gl_Position = mvpMatrix * worldPosition;
 }

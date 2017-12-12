@@ -25,6 +25,12 @@ function testMath() {
 		});
 		
 		describe('Maths \'createProjectionMatrix\' method test', () => {
+			var event = new Event("load");
+			beforeEach(() => {
+				window.dispatchEvent(event);
+			});
+			
+			maths = new Maths();
 			// arguments to test
 			var args = [
 				// nearPlane, farPlane, FOV
